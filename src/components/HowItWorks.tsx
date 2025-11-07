@@ -76,17 +76,17 @@ const HowItWorks = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
             Bagaimana Cara Kerjanya?
           </h2>
-          <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed px-2">
             Proses komprehensif dari persiapan hingga mendapatkan pekerjaan impian Anda
           </p>
         </div>
 
         <div className="relative">
-          <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-4 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-4 mt-6">
             {steps.map((step, index) => (
               <div
                 key={index}
@@ -98,15 +98,15 @@ const HowItWorks = () => {
                 style={{ transitionDelay: `${index * 200}ms` }}
               >
                 <div
-                  className={`${step.color} ${step.shadowColor} w-20 h-20 lg:w-16 lg:h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-white shadow-xl relative z-10 group-hover:scale-125 group-hover:rotate-12 transition-all duration-500 hover:shadow-2xl`}
+                  className={`${step.color} ${step.shadowColor} w-16 h-16 sm:w-18 sm:h-18 lg:w-16 lg:h-16 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 text-white shadow-xl relative z-10 group-hover:scale-125 group-hover:rotate-12 transition-all duration-500 hover:shadow-2xl`}
                 >
                   {step.icon}
                   <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
-                <h3 className="text-xl lg:text-lg font-semibold mb-3 text-gray-900 group-hover:text-primary-600 transition-colors duration-300">
+                <h3 className="text-base sm:text-lg lg:text-base font-semibold mb-2 sm:mb-3 text-gray-900 group-hover:text-primary-600 transition-colors duration-300">
                   {step.title}
                 </h3>
-                <p className="text-gray-600 text-sm lg:text-xs leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
+                <p className="text-xs sm:text-sm lg:text-xs text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-300 px-2">
                   {step.description}
                 </p>
               </div>

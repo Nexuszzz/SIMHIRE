@@ -72,8 +72,8 @@ const AnimatedStats = () => {
   }, [stats, animateNumber]);
 
   return (
-    <section ref={sectionRef} className="py-20 text-center">
-      <div className="grid md:grid-cols-3 gap-8">
+    <section ref={sectionRef} className="py-12 sm:py-16 lg:py-20 text-center">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
         {stats.map((stat, index) => (
           <div 
             key={index} 
@@ -84,7 +84,7 @@ const AnimatedStats = () => {
             }`}
             style={{ transitionDelay: `${index * 300}ms` }}
           >
-            <div className="text-4xl font-bold mb-3">
+            <div className="text-3xl sm:text-4xl font-bold mb-2 sm:mb-3">
               {visibleStats.includes(index) ? (
                 stat.stat.includes('%') ? `${animatedNumbers[index] || 0}%` :
                 stat.stat.includes('K') ? `${(((animatedNumbers[index] || 0) / 1000).toFixed(1))}K+` :
@@ -92,10 +92,10 @@ const AnimatedStats = () => {
                 stat.stat
               ) : '0'}
             </div>
-            <h3 className="text-lg font-semibold mb-3">
+            <h3 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">
               {stat.title}
             </h3>
-            <p className="text-sm">
+            <p className="text-xs sm:text-sm text-gray-600">
               {stat.description}
             </p>
           </div>

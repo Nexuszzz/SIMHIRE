@@ -97,20 +97,20 @@ const SDGImpact = () => {
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 text-white">
-          <div className="inline-flex items-center space-x-2 bg-emerald-800/50 backdrop-blur-lg rounded-full px-6 py-3 mb-6 border border-emerald-700/50 hover:scale-105 transition-transform duration-300">
-            <Globe className="w-5 h-5 animate-spin" style={{ animationDuration: '3s' }} />
-            <span className="text-sm font-medium">SDG 8: Decent Work and Economic Growth</span>
+        <div className="text-center mb-12 sm:mb-16 text-white">
+          <div className="inline-flex items-center space-x-2 bg-emerald-800/50 backdrop-blur-lg rounded-full px-4 sm:px-6 py-2 sm:py-3 mb-4 sm:mb-6 border border-emerald-700/50 hover:scale-105 transition-transform duration-300">
+            <Globe className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" style={{ animationDuration: '3s' }} />
+            <span className="text-xs sm:text-sm font-medium">SDG 8: Decent Work and Economic Growth</span>
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 sm:mb-6 text-white px-2">
             Dampak untuk Indonesia
           </h2>
-          <p className="text-xl md:text-2xl text-white max-w-4xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-white max-w-4xl mx-auto leading-relaxed px-2">
             Berkontribusi pada Sustainable Development Goals melalui penciptaan pekerjaan layak dan pertumbuhan ekonomi yang inklusif
           </p>
         </div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 mb-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-6 mb-12 sm:mb-20">
           {impacts.map((impact, index) => (
             <div 
               key={index} 
@@ -121,12 +121,12 @@ const SDGImpact = () => {
               }`}
               style={{ transitionDelay: `${index * 300}ms` }}
             >
-              <div className={`bg-gradient-to-br ${impact.color} w-24 h-24 lg:w-20 lg:h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl group-hover:scale-125 group-hover:rotate-12 transition-all duration-500 relative`}>
+              <div className={`bg-gradient-to-br ${impact.color} w-20 h-20 sm:w-22 sm:h-22 lg:w-20 lg:h-20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-2xl group-hover:scale-125 group-hover:rotate-12 transition-all duration-500 relative`}>
                 {impact.icon}
                 <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
               
-              <div className="text-4xl lg:text-3xl font-bold bg-gradient-to-r from-emerald-400 to-emerald-300 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-3xl sm:text-4xl lg:text-3xl font-bold bg-gradient-to-r from-emerald-400 to-emerald-300 bg-clip-text text-transparent mb-2 sm:mb-3 group-hover:scale-110 transition-transform duration-300">
                 {visibleStats.includes(index) ? (
                   impact.stat.includes('%') ? `${animatedNumbers[index] || 0}%` :
                   impact.stat.includes('K') ? `${(((animatedNumbers[index] || 0) / 1000).toFixed(1))}K+` :
@@ -135,19 +135,19 @@ const SDGImpact = () => {
                 ) : '0'}
               </div>
               
-              <h3 className="text-lg lg:text-base font-semibold mb-3 group-hover:text-emerald-300 transition-colors duration-300">
+              <h3 className="text-base sm:text-lg lg:text-base font-semibold mb-2 sm:mb-3 group-hover:text-emerald-300 transition-colors duration-300 px-2">
                 {impact.title}
               </h3>
-              <p className="text-emerald-200 text-sm lg:text-xs leading-relaxed group-hover:text-emerald-100 transition-colors duration-300">
+              <p className="text-emerald-200 text-xs sm:text-sm lg:text-xs leading-relaxed group-hover:text-emerald-100 transition-colors duration-300 px-2">
                 {impact.description}
               </p>
             </div>
           ))}
         </div>
         
-        <div className="bg-emerald-800/50 backdrop-blur-lg rounded-3xl p-8 lg:p-12 border border-emerald-700/50 hover:bg-emerald-800/70 transition-all duration-500 transform hover:scale-105">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl lg:text-3xl font-bold mb-6 bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
+        <div className="bg-emerald-800/50 backdrop-blur-lg rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 border border-emerald-700/50 hover:bg-emerald-800/70 transition-all duration-500 transform hover:scale-105">
+          <div className="text-center mb-6 sm:mb-8">
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent px-2">
               Komitmen Kami
             </h3>
             <p className="text-emerald-200 max-w-3xl mx-auto text-lg leading-relaxed">
