@@ -7,13 +7,12 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   server: {
-    host: '0.0.0.0', // Expose to network
+    host: true, // Listen on all addresses including LAN
     port: 5173,
     strictPort: true,
     cors: true,
     hmr: {
-      host: process.env.VITE_HMR_HOST || 'localhost',
-      port: parseInt(process.env.VITE_HMR_PORT || '5173'),
+      clientPort: 5173,
     },
   },
   resolve: {
