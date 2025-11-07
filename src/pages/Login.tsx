@@ -142,7 +142,7 @@ const Login = () => {
     <div
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-primary-900 text-white flex items-center justify-center p-6 relative"
+      className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-primary-900 text-white flex items-center justify-center p-4 sm:p-6 relative"
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div style={{ x: sx1, y: sy1 }} className="absolute -top-10 -left-10 w-72 h-72 bg-primary-500/10 rounded-full blur-3xl animate-pulse" />
@@ -154,24 +154,24 @@ const Login = () => {
           <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Beranda
         </Link>
 
-        <div className="bg-gray-900/70 backdrop-blur-xl rounded-card shadow-2xl border border-white/10 p-8 hover:shadow-primary-500/10 transition-shadow">
-          <div className="text-center mb-8">
-            <div className="mx-auto w-14 h-14 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg mb-4 animate-pulse">
-              <AtSign className="w-7 h-7" />
+        <div className="bg-gray-900/70 backdrop-blur-xl rounded-card shadow-2xl border border-white/10 p-6 sm:p-8 hover:shadow-primary-500/10 transition-shadow">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="mx-auto w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg mb-4 animate-pulse">
+              <AtSign className="w-6 h-6 sm:w-7 sm:h-7" />
             </div>
-            <h1 className="text-2xl font-bold">Masuk ke Akun</h1>
-            <p className="text-gray-400 mt-1">Akses dashboard dan kelola aktivitas Anda</p>
+            <h1 className="text-xl sm:text-2xl font-bold">Masuk ke Akun</h1>
+            <p className="text-sm sm:text-base text-gray-400 mt-1">Akses dashboard dan kelola aktivitas Anda</p>
           </div>
 
           <form onSubmit={onSubmit} className="space-y-4">
             <div>
               <label className="block text-sm mb-1">Email</label>
               <div className="relative">
-                <Mail className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="email"
                   required
-                  className={`w-full pl-10 pr-3 py-3 rounded-input bg-gray-800/80 border ${emailError ? 'border-red-500/70 focus:border-red-500' : 'border-white/10 focus:border-primary-500'} outline-none transition-all`}
+                  className={`w-full pl-9 sm:pl-10 pr-3 py-2.5 sm:py-3 text-sm sm:text-base rounded-input bg-gray-800/80 border ${emailError ? 'border-red-500/70 focus:border-red-500' : 'border-white/10 focus:border-primary-500'} outline-none transition-all`}
                   placeholder="nama@email.com"
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); validateEmail(e.target.value); }}
@@ -189,11 +189,11 @@ const Login = () => {
             <div>
               <label className="block text-sm mb-1">Password</label>
               <div className="relative">
-                <Lock className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
-                  className="w-full pl-10 pr-11 py-3 rounded-input bg-gray-800/80 border border-white/10 focus:border-primary-500 outline-none transition-all"
+                  className="w-full pl-9 sm:pl-10 pr-11 py-2.5 sm:py-3 text-sm sm:text-base rounded-input bg-gray-800/80 border border-white/10 focus:border-primary-500 outline-none transition-all"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); calcPasswordStrength(e.target.value); }}
@@ -204,13 +204,13 @@ const Login = () => {
                   onClick={() => setShowPassword((s) => !s)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200 p-1 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500/50"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
                 </button>
               </div>
               <div className="mt-2">
                 <div className="flex gap-1 mb-1">
                   {[0,1,2,3].map((i) => (
-                    <div key={i} className={`h-1.5 flex-1 rounded ${i < passwordStrength ? strengthColor(passwordStrength) : 'bg-white/10'}`}></div>
+                    <div key={i} className={`h-1 sm:h-1.5 flex-1 rounded ${i < passwordStrength ? strengthColor(passwordStrength) : 'bg-white/10'}`}></div>
                   ))}
                 </div>
                 <div className="text-xs text-gray-400">{password ? passwordHint : 'Gunakan min. 8 karakter, kombinasikan huruf, angka, dan simbol.'}</div>
@@ -222,31 +222,31 @@ const Login = () => {
               disabled={loading}
               whileTap={{ scale: 0.98 }}
               whileHover={{ y: -1 }}
-              className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 disabled:opacity-60 py-3 rounded-button font-semibold flex items-center justify-center gap-2 transition-all"
+              className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 disabled:opacity-60 py-2.5 sm:py-3 text-sm sm:text-base rounded-button font-semibold flex items-center justify-center gap-2 transition-all"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
+              {loading ? <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" /> : null}
               {loading ? 'Memproses...' : 'Masuk'}
             </motion.button>
           </form>
 
-          <div className="my-6 flex items-center gap-4">
+          <div className="my-4 sm:my-6 flex items-center gap-4">
             <div className="h-px flex-1 bg-white/10" />
             <span className="text-xs text-gray-400">atau</span>
             <div className="h-px flex-1 bg-white/10" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <motion.button onClick={() => socialLogin('google')} disabled={loading} whileTap={{ scale: 0.98 }} whileHover={{ y: -1 }} className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-white text-gray-900 hover:bg-gray-100 transition-all">
-              <img alt="Google" src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" className="w-5 h-5" />
+            <motion.button onClick={() => socialLogin('google')} disabled={loading} whileTap={{ scale: 0.98 }} whileHover={{ y: -1 }} className="flex items-center justify-center gap-2 py-2.5 text-sm sm:text-base rounded-lg bg-white text-gray-900 hover:bg-gray-100 transition-all">
+              <img alt="Google" src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" className="w-4 h-4 sm:w-5 sm:h-5" />
               <span>Google</span>
             </motion.button>
-            <motion.button onClick={() => socialLogin('linkedin')} disabled={loading} whileTap={{ scale: 0.98 }} whileHover={{ y: -1 }} className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-all">
-              <Linkedin className="w-5 h-5" />
+            <motion.button onClick={() => socialLogin('linkedin')} disabled={loading} whileTap={{ scale: 0.98 }} whileHover={{ y: -1 }} className="flex items-center justify-center gap-2 py-2.5 text-sm sm:text-base rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-all">
+              <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
               <span>LinkedIn</span>
             </motion.button>
           </div>
 
-          <div className="my-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+          <div className="my-4 sm:my-6 p-3 sm:p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
             <div className="flex items-start gap-3">
               <div className="text-blue-400 mt-0.5">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
