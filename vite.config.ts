@@ -27,47 +27,13 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'vendor-react';
-            }
-            if (id.includes('framer-motion')) {
-              return 'vendor-framer';
-            }
-            if (id.includes('@radix-ui')) {
-              return 'vendor-ui';
-            }
-            if (id.includes('lucide-react')) {
-              return 'vendor-icons';
-            }
-            if (id.includes('clsx') || id.includes('tailwind-merge') || id.includes('sonner') || id.includes('zod')) {
-              return 'vendor-utils';
-            }
-            return 'vendor';
-          }
-          
-          if (id.includes('/dashboard/pages/')) {
-            if (id.includes('Simulasi')) {
-              return 'feature-simulasi';
-            }
-            if (id.includes('Portfolio') || id.includes('AutoCV') || id.includes('Profile')) {
-              return 'feature-portfolio';
-            }
-            return 'feature-dashboard';
-          }
-          
-          if (id.includes('/company/pages/')) {
-            return 'feature-company';
-          }
-          
-          if (id.includes('/dashboard/components/') || id.includes('/company/components/')) {
-            return 'shared-components';
-          }
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['framer-motion', 'lucide-react'],
         },
       },
     },
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 1000,
     sourcemap: false,
   },
 });
