@@ -107,7 +107,7 @@ const DashboardOverview = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/20 to-gray-50">
-    <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-4 sm:space-y-8">
       {/* Header - Enhanced */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
@@ -115,16 +115,16 @@ const DashboardOverview = () => {
         className="flex flex-col md:flex-row md:items-center justify-between gap-4"
       >
         <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-3 bg-gradient-to-br from-primary-500 to-blue-600 rounded-xl shadow-lg">
-              <BarChart3 className="w-6 h-6 text-white" />
+          <div className="flex items-center gap-2 sm:gap-3 mb-2">
+            <div className="p-2 sm:p-3 bg-gradient-to-br from-primary-500 to-blue-600 rounded-lg sm:rounded-xl shadow-lg">
+              <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
               Dashboard Overview
             </h1>
           </div>
-          <p className="text-gray-600 text-lg flex items-center gap-2">
-            <Target className="w-5 h-5" />
+          <p className="text-sm sm:text-base lg:text-lg text-gray-600 flex items-center gap-2">
+            <Target className="w-4 h-4 sm:w-5 sm:h-5" />
             Pantau progress karir Anda
           </p>
         </div>
@@ -133,7 +133,7 @@ const DashboardOverview = () => {
             <button
               key={range}
               onClick={() => setTimeRange(range)}
-              className={`px-4 py-2 rounded-button text-sm font-medium transition-all ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-button text-xs sm:text-sm font-medium transition-all ${
                 timeRange === range
                   ? 'bg-primary-600 text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -146,7 +146,7 @@ const DashboardOverview = () => {
       </motion.div>
 
       {/* Stats Cards - Using GradientCard */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         {stats.map((stat, index) => (
           <GradientCard
             key={stat.title}

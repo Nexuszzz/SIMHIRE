@@ -97,19 +97,19 @@ const CompanyFeatures = () => {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6">
-            Fitur untuk Perusahaan
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
+            Solusi Rekrutmen untuk <span className="text-primary-600">Perusahaan</span>
           </h2>
-          <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-            Solusi rekrutmen modern dengan teknologi terdepan untuk menemukan talenta terbaik
+          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+            Platform komprehensif untuk mengelola proses rekrutmen dari awal hingga akhir
           </p>
         </div>
-        
-        <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className={`group bg-white rounded-card shadow-card p-8 lg:p-10 hover:shadow-card-hover transition-all duration-700 transform hover:-translate-y-6 border border-gray-200 hover:border-primary-200 relative overflow-hidden ${
+              className={`group bg-white rounded-xl sm:rounded-card shadow-card p-6 sm:p-8 lg:p-10 hover:shadow-card-hover transition-all duration-700 transform hover:-translate-y-6 border border-gray-200 hover:border-primary-200 relative overflow-hidden ${
                 visibleCards.includes(index) 
                   ? 'opacity-100 translate-y-0 scale-100' 
                   : 'opacity-0 translate-y-10 scale-95'
@@ -119,15 +119,15 @@ const CompanyFeatures = () => {
               {/* Hover Background Effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 to-primary-100/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               
-              <div className={`${feature.color} ${feature.hoverColor} ${feature.shadowColor} w-20 h-20 rounded-2xl flex items-center justify-center mb-8 text-white shadow-xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 relative z-10`}>
+              <div className={`${feature.color} ${feature.hoverColor} ${feature.shadowColor} w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center mb-6 sm:mb-8 text-white shadow-xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 relative z-10`}>
                 {feature.icon}
-                <div className="absolute inset-0 rounded-2xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
               
-              <h3 className="text-xl lg:text-2xl font-semibold mb-4 text-gray-900 group-hover:text-primary-600 transition-colors duration-300 relative z-10">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-3 sm:mb-4 text-gray-900 group-hover:text-primary-600 transition-colors duration-300 relative z-10">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 mb-8 leading-relaxed group-hover:text-gray-700 transition-colors duration-300 relative z-10">
+              <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 leading-relaxed group-hover:text-gray-700 transition-colors duration-300 relative z-10">
                 {feature.description}
               </p>
               

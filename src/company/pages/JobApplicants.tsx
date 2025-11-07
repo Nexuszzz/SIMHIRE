@@ -180,10 +180,10 @@ const JobApplicants: React.FC = () => {
           Kembali ke Daftar Lowongan
         </Button>
         
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{job.title}</h1>
-            <div className="flex items-center gap-4 mt-2 text-gray-600">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{job.title}</h1>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2 text-sm sm:text-base text-gray-600">
               <div className="flex items-center gap-1">
                 <MapPin className="w-4 h-4" />
                 <span>{job.location}</span>
@@ -202,7 +202,7 @@ const JobApplicants: React.FC = () => {
       </div>
       
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           { label: 'Total Pelamar', value: stats.total, icon: User, color: 'primary' },
           { label: 'Menunggu', value: stats.pending, icon: Clock, color: 'blue' },
@@ -214,15 +214,15 @@ const JobApplicants: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="bg-white p-6 rounded-card border border-gray-200 hover:shadow-card-hover transition-shadow"
+            className="bg-white p-4 sm:p-6 rounded-card border border-gray-200 hover:shadow-card-hover transition-shadow"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{stat.label}</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">{stat.value}</p>
+                <p className="text-xs sm:text-sm text-gray-600">{stat.label}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{stat.value}</p>
               </div>
-              <div className={`w-12 h-12 rounded-full bg-${stat.color}-100 flex items-center justify-center`}>
-                <stat.icon className={`w-6 h-6 text-${stat.color}-600`} />
+              <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-${stat.color}-100 flex items-center justify-center`}>
+                <stat.icon className={`w-5 h-5 sm:w-6 sm:h-6 text-${stat.color}-600`} />
               </div>
             </div>
           </motion.div>

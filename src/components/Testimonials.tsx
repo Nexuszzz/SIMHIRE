@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 
 const Testimonials = () => {
@@ -73,20 +74,25 @@ const Testimonials = () => {
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-6 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-            Apa Kata Pengguna Kami?
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12 sm:mb-16"
+        >
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            Apa Kata Mereka?
           </h2>
-          <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
             Ribuan kandidat dan ratusan perusahaan telah merasakan manfaat platform kami
           </p>
-        </div>
-        
-        <div className="grid md:grid-cols-3 gap-8 lg:gap-10">
+        </motion.div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
           {testimonials.map((testimonial, index) => (
             <div 
               key={index} 
-              className={`group bg-white rounded-2xl p-8 lg:p-10 relative shadow-lg hover:shadow-2xl transition-all duration-700 transform hover:-translate-y-6 border border-gray-100 hover:border-emerald-200 overflow-hidden ${
+              className={`group bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-10 relative shadow-lg hover:shadow-2xl transition-all duration-700 transform hover:-translate-y-6 border border-gray-100 hover:border-emerald-200 overflow-hidden ${
                 visibleCards.includes(index) 
                   ? 'opacity-100 translate-y-0 scale-100' 
                   : 'opacity-0 translate-y-10 scale-95'
@@ -96,7 +102,7 @@ const Testimonials = () => {
               {/* Hover Background Effect */}
               <div className={`absolute inset-0 bg-gradient-to-br ${testimonial.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
               
-              <div className="absolute top-3 right-3 md:top-6 md:right-6 text-emerald-500 group-hover:text-emerald-600 transition-colors duration-300 pointer-events-none">
+              <div className="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-6 md:right-6 text-emerald-500 group-hover:text-emerald-600 transition-colors duration-300 pointer-events-none">
                 <Quote className="w-8 h-8 md:w-10 md:h-10 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
               </div>
               

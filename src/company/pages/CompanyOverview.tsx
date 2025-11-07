@@ -26,21 +26,21 @@ const CompanyOverview: React.FC = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      className={`bg-gradient-to-br ${gradient} rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow`}
+      className={`bg-gradient-to-br ${gradient} rounded-lg sm:rounded-xl p-4 sm:p-6 text-white shadow-lg hover:shadow-xl transition-shadow`}
     >
-      <div className="flex items-center justify-between mb-4">
-        <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
-          <Icon className="w-6 h-6" />
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+          <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
         </div>
         {trend && (
-          <div className="flex items-center text-sm">
-            <TrendingUp className="w-4 h-4 mr-1" />
+          <div className="flex items-center text-xs sm:text-sm">
+            <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
             <span>{trend.isPositive ? '+' : ''}{trend.value}%</span>
           </div>
         )}
       </div>
-      <div className="text-3xl font-bold mb-1">{value}</div>
-      <div className="text-white/90 text-sm">{title}</div>
+      <div className="text-2xl sm:text-3xl font-bold mb-1">{value}</div>
+      <div className="text-white/90 text-xs sm:text-sm">{title}</div>
       {subtitle && <div className="text-white/70 text-xs mt-1">{subtitle}</div>}
     </motion.div>
   );
@@ -67,23 +67,24 @@ const CompanyOverview: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
-          <p className="text-gray-600">Ringkasan aktivitas rekrutmen perusahaan Anda</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Dashboard Overview</h1>
+          <p className="text-sm sm:text-base text-gray-600">Ringkasan aktivitas rekrutmen perusahaan Anda</p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-accent-blue">
+          <Badge variant="outline" className="text-accent-blue text-xs sm:text-sm">
             <Calendar className="w-3 h-3 mr-1" />
-            {new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            <span className="hidden sm:inline">{new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+            <span className="sm:hidden">{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
           </Badge>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         <StatCard
           title="Total Lowongan"
           value={metrics.totalJobs}
@@ -120,65 +121,66 @@ const CompanyOverview: React.FC = () => {
 
       {/* Top Candidates from Simulasi */}
       <Card className="border-2 border-primary-200">
-        <CardHeader className="bg-gradient-to-r from-primary-50 to-primary-100">
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-primary-600" />
+        <CardHeader className="bg-gradient-to-r from-primary-50 to-primary-100 p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600" />
               Top Performers - Simulasi Kerja
             </CardTitle>
             <Link to="/company/simulasi">
-              <Button variant="ghost" size="sm" className="gap-2">
+              <Button variant="ghost" size="sm" className="gap-2 text-sm">
                 Lihat Semua
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
               </Button>
             </Link>
           </div>
         </CardHeader>
-        <CardContent className="pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {topCandidates.map((candidate, idx) => (
               <motion.div
                 key={candidate.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: idx * 0.1 }}
-                className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border-2 border-gray-200 hover:border-primary-400 transition-all"
+                className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg sm:rounded-xl p-3 sm:p-4 border-2 border-gray-200 hover:border-primary-400 transition-all"
               >
-                <div className="flex items-center gap-3 mb-3">
+                <div className="flex items-center gap-2 sm:gap-3 mb-3">
                   <div className="relative">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg">
                       {candidate.candidateName.charAt(0)}
                     </div>
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center text-xs font-bold">
+                    <div className="absolute -bottom-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-yellow-400 rounded-full flex items-center justify-center text-xs font-bold">
                       #{idx + 1}
                     </div>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 text-sm">{candidate.candidateName}</h3>
-                    <p className="text-xs text-gray-600">{candidate.categoryName}</p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 text-xs sm:text-sm truncate">{candidate.candidateName}</h3>
+                    <p className="text-xs text-gray-600 truncate">{candidate.categoryName}</p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-2xl font-bold text-primary-600">{candidate.percentage}%</span>
+                  <span className="text-xl sm:text-2xl font-bold text-primary-600">{candidate.percentage}%</span>
                   {candidate.badge && (
                     <Badge className="bg-yellow-100 text-yellow-700 text-xs">
                       <Zap className="w-3 h-3 mr-1" />
-                      {candidate.badge}
+                      <span className="hidden sm:inline">{candidate.badge}</span>
+                      <span className="sm:hidden">★</span>
                     </Badge>
                   )}
                 </div>
                 <div className="flex gap-1">
-                  <div className="flex-1 bg-blue-100 rounded px-2 py-1 text-center">
+                  <div className="flex-1 bg-blue-100 rounded px-1.5 sm:px-2 py-1 text-center">
                     <div className="text-xs text-blue-600">Tech</div>
-                    <div className="text-sm font-bold text-blue-700">{candidate.breakdown.technical}</div>
+                    <div className="text-xs sm:text-sm font-bold text-blue-700">{candidate.breakdown.technical}</div>
                   </div>
-                  <div className="flex-1 bg-purple-100 rounded px-2 py-1 text-center">
+                  <div className="flex-1 bg-purple-100 rounded px-1.5 sm:px-2 py-1 text-center">
                     <div className="text-xs text-purple-600">Create</div>
-                    <div className="text-sm font-bold text-purple-700">{candidate.breakdown.creativity}</div>
+                    <div className="text-xs sm:text-sm font-bold text-purple-700">{candidate.breakdown.creativity}</div>
                   </div>
-                  <div className="flex-1 bg-green-100 rounded px-2 py-1 text-center">
+                  <div className="flex-1 bg-green-100 rounded px-1.5 sm:px-2 py-1 text-center">
                     <div className="text-xs text-green-600">Eff</div>
-                    <div className="text-sm font-bold text-green-700">{candidate.breakdown.efficiency}</div>
+                    <div className="text-xs sm:text-sm font-bold text-green-700">{candidate.breakdown.efficiency}</div>
                   </div>
                 </div>
               </motion.div>
@@ -188,12 +190,12 @@ const CompanyOverview: React.FC = () => {
       </Card>
 
       {/* Recent Jobs & Applications */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Recent Jobs */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Briefcase className="w-5 h-5" />
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Briefcase className="w-4 h-4 sm:w-5 sm:h-5" />
               Lowongan Terbaru
             </CardTitle>
           </CardHeader>

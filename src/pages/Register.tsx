@@ -159,7 +159,7 @@ const Register = () => {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => { mx.set(0); my.set(0); }}
-      className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-primary-900 text-white flex items-center justify-center p-6"
+      className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-primary-900 text-white flex items-center justify-center p-4 sm:p-6"
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div style={{ x: sx, y: sy }} className="absolute -top-10 -left-10 w-80 h-80 bg-primary-500/10 rounded-full blur-3xl animate-pulse" />
@@ -171,17 +171,17 @@ const Register = () => {
           <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Beranda
         </Link>
 
-        <div className="bg-gray-900/70 backdrop-blur-xl rounded-card shadow-2xl border border-white/10 p-8">
+        <div className="bg-gray-900/70 backdrop-blur-xl rounded-card shadow-2xl border border-white/10 p-6 sm:p-8">
           {/* Progress */}
-          <div className="flex items-center justify-center mb-8">
+          <div className="flex items-center justify-center mb-6 sm:mb-8">
             {[1, 2, 3].map((s) => (
               <div key={s} className="flex items-center">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
+                <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base font-bold transition-all ${
                   step >= s ? 'bg-primary-500 text-white' : 'bg-gray-700 text-gray-400'
                 }`}>
-                  {step > s ? <CheckCircle2 className="w-5 h-5" /> : s}
+                  {step > s ? <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" /> : s}
                 </div>
-                {s < 3 && <div className={`w-16 h-1 mx-2 ${step > s ? 'bg-primary-500' : 'bg-gray-700'}`} />}
+                {s < 3 && <div className={`w-12 sm:w-16 h-1 mx-1 sm:mx-2 ${step > s ? 'bg-primary-500' : 'bg-gray-700'}`} />}
               </div>
             ))}
           </div>
@@ -190,26 +190,26 @@ const Register = () => {
             {/* STEP 1: Role Selection */}
             {step === 1 && (
               <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <div className="text-center mb-8">
-                  <h1 className="text-3xl font-bold mb-2">Pilih Jenis Akun</h1>
-                  <p className="text-gray-400">Daftar sebagai perusahaan atau pencari kerja</p>
+                <div className="text-center mb-6 sm:mb-8">
+                  <h1 className="text-2xl sm:text-3xl font-bold mb-2">Pilih Jenis Akun</h1>
+                  <p className="text-sm sm:text-base text-gray-400">Daftar sebagai perusahaan atau pencari kerja</p>
                 </div>
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <button
                     onClick={() => { setRole('candidate'); setStep(2); }}
-                    className="group bg-primary-500/10 hover:bg-primary-500/20 border-2 border-primary-500/30 hover:border-primary-500 rounded-xl p-8 text-left transition-all"
+                    className="group bg-primary-500/10 hover:bg-primary-500/20 border-2 border-primary-500/30 hover:border-primary-500 rounded-xl p-6 sm:p-8 text-left transition-all"
                   >
-                    <Briefcase className="w-12 h-12 mb-4 text-primary-500" />
-                    <h3 className="text-xl font-bold mb-2">Pencari Kerja</h3>
-                    <p className="text-gray-400 text-sm">Cari lowongan, ikuti simulasi, dan bangun portofolio</p>
+                    <Briefcase className="w-10 h-10 sm:w-12 sm:h-12 mb-3 sm:mb-4 text-primary-500" />
+                    <h3 className="text-lg sm:text-xl font-bold mb-2">Pencari Kerja</h3>
+                    <p className="text-gray-400 text-xs sm:text-sm">Cari lowongan, ikuti simulasi, dan bangun portofolio</p>
                   </button>
                   <button
                     onClick={() => { setRole('company'); setStep(2); }}
-                    className="group bg-accent-blue/10 hover:bg-accent-blue/20 border-2 border-accent-blue/30 hover:border-accent-blue rounded-xl p-8 text-left transition-all"
+                    className="group bg-accent-blue/10 hover:bg-accent-blue/20 border-2 border-accent-blue/30 hover:border-accent-blue rounded-xl p-6 sm:p-8 text-left transition-all"
                   >
-                    <Building2 className="w-12 h-12 mb-4 text-accent-blue" />
-                    <h3 className="text-xl font-bold mb-2">Perusahaan</h3>
-                    <p className="text-gray-400 text-sm">Post lowongan, cari talent, kelola rekrutmen</p>
+                    <Building2 className="w-10 h-10 sm:w-12 sm:h-12 mb-3 sm:mb-4 text-accent-blue" />
+                    <h3 className="text-lg sm:text-xl font-bold mb-2">Perusahaan</h3>
+                    <p className="text-gray-400 text-xs sm:text-sm">Post lowongan, cari talent, kelola rekrutmen</p>
                   </button>
                 </div>
               </motion.div>
@@ -219,34 +219,34 @@ const Register = () => {
             {step === 2 && role && (
               <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                 <div className="text-center mb-6">
-                  <div className={`mx-auto w-14 h-14 rounded-xl ${role === 'company' ? 'bg-accent-blue' : 'bg-primary-500'} flex items-center justify-center mb-4`}>
-                    {role === 'company' ? <Building2 className="w-7 h-7" /> : <Briefcase className="w-7 h-7" />}
+                  <div className={`mx-auto w-12 h-12 sm:w-14 sm:h-14 rounded-xl ${role === 'company' ? 'bg-accent-blue' : 'bg-primary-500'} flex items-center justify-center mb-4`}>
+                    {role === 'company' ? <Building2 className="w-6 h-6 sm:w-7 sm:h-7" /> : <Briefcase className="w-6 h-6 sm:w-7 sm:h-7" />}
                   </div>
-                  <h1 className="text-2xl font-bold">Informasi Dasar</h1>
-                  <p className="text-gray-400">Lengkapi data diri Anda</p>
+                  <h1 className="text-xl sm:text-2xl font-bold">Informasi Dasar</h1>
+                  <p className="text-sm sm:text-base text-gray-400">Lengkapi data diri Anda</p>
                 </div>
                 <form onSubmit={handleBasicInfoSubmit} className="space-y-4">
                   {role === 'company' && (
                     <div>
                       <label className="block text-sm mb-1">Nama Perusahaan *</label>
-                      <input type="text" required className="w-full px-3 py-3 rounded-lg bg-gray-800/80 border border-white/10 focus:border-accent-blue outline-none"
+                      <input type="text" required className="w-full px-3 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg bg-gray-800/80 border border-white/10 focus:border-accent-blue outline-none"
                         placeholder="PT. Teknologi Indonesia" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
                     </div>
                   )}
                   <div>
                     <label className="block text-sm mb-1">{role === 'company' ? 'Nama Perwakilan *' : 'Nama Lengkap *'}</label>
                     <div className="relative">
-                      <UserIcon className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                      <input type="text" required className="w-full pl-10 pr-3 py-3 rounded-lg bg-gray-800/80 border border-white/10 focus:border-primary-500 outline-none"
+                      <UserIcon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input type="text" required className="w-full pl-9 sm:pl-10 pr-3 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg bg-gray-800/80 border border-white/10 focus:border-primary-500 outline-none"
                         placeholder="Nama lengkap" value={name} onChange={(e) => setName(e.target.value)} />
                     </div>
                   </div>
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm mb-1">Email *</label>
                       <div className="relative">
-                        <Mail className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                        <input type="email" required className={`w-full pl-10 pr-3 py-3 rounded-lg bg-gray-800/80 border ${emailError ? 'border-red-500' : 'border-white/10'} outline-none`}
+                        <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input type="email" required className={`w-full pl-9 sm:pl-10 pr-3 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg bg-gray-800/80 border ${emailError ? 'border-red-500' : 'border-white/10'} outline-none`}
                           placeholder="email@domain.com" value={email} onChange={(e) => { setEmail(e.target.value); validateEmail(e.target.value); }} />
                       </div>
                       {emailError && <div className="text-red-400 text-xs mt-1">{emailError}</div>}
@@ -254,27 +254,27 @@ const Register = () => {
                     <div>
                       <label className="block text-sm mb-1">No. Telepon *</label>
                       <div className="relative">
-                        <Phone className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                        <input type="tel" required className="w-full pl-10 pr-3 py-3 rounded-lg bg-gray-800/80 border border-white/10 outline-none"
+                        <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input type="tel" required className="w-full pl-9 sm:pl-10 pr-3 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg bg-gray-800/80 border border-white/10 outline-none"
                           placeholder="08123456789" value={phone} onChange={(e) => setPhone(e.target.value)} />
                       </div>
                     </div>
                   </div>
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm mb-1">Password *</label>
                       <div className="relative">
-                        <Lock className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                        <input type={showPassword ? 'text' : 'password'} required className="w-full pl-10 pr-11 py-3 rounded-lg bg-gray-800/80 border border-white/10 outline-none"
+                        <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input type={showPassword ? 'text' : 'password'} required className="w-full pl-9 sm:pl-10 pr-11 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg bg-gray-800/80 border border-white/10 outline-none"
                           placeholder="••••••••" value={password} onChange={(e) => { setPassword(e.target.value); calcPasswordStrength(e.target.value); }} />
                         <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400">
-                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          {showPassword ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
                         </button>
                       </div>
                       <div className="mt-2">
                         <div className="flex gap-1">
                           {[0,1,2,3].map((i) => (
-                            <div key={i} className={`h-1.5 flex-1 rounded ${i < passwordStrength ? strengthColor(passwordStrength) : 'bg-white/10'}`}></div>
+                            <div key={i} className={`h-1 sm:h-1.5 flex-1 rounded ${i < passwordStrength ? strengthColor(passwordStrength) : 'bg-white/10'}`}></div>
                           ))}
                         </div>
                       </div>

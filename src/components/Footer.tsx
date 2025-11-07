@@ -15,29 +15,29 @@ const Footer = () => {
         <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-primary-500/5 rounded-full blur-2xl animate-bounce"></div>
       </div>
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-white via-primary-200 to-white bg-clip-text text-transparent">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 relative z-10">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-white via-primary-200 to-white bg-clip-text text-transparent">
             Siap Memulai Karir Impian Anda?
           </h2>
-          <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-300 mb-6 sm:mb-10 max-w-3xl mx-auto leading-relaxed px-4">
             Bergabung dengan ribuan kandidat yang telah berhasil mendapatkan pekerjaan melalui platform kami
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-6 justify-center px-4">
             <button 
               onClick={() => navigate('/register')}
-              className="tap-target group bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 px-8 sm:px-10 py-3 sm:py-4 rounded-button font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-primary-500/25 flex items-center justify-center space-x-3 relative overflow-hidden"
+              className="tap-target group bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 px-6 sm:px-8 lg:px-10 py-3 sm:py-3.5 lg:py-4 rounded-button text-sm sm:text-base font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-primary-500/25 flex items-center justify-center space-x-2 sm:space-x-3 relative overflow-hidden"
             >
               <div className="pointer-events-none absolute inset-0 bg-white/15 opacity-0 -translate-x-[120%] group-hover:opacity-100 group-hover:translate-x-[120%] transition-all duration-400 ease-out will-change-transform"></div>
               <span>Mulai Sekarang</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-300" />
             </button>
             <button 
               onClick={() => {
                 // Scroll to top or navigate to about page
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="tap-target group border-2 border-gray-600 text-gray-300 hover:border-primary-500 hover:text-primary-400 px-8 sm:px-10 py-3 sm:py-4 rounded-button font-semibold transition-all duration-300 transform hover:scale-105 relative overflow-hidden"
+              className="tap-target group border-2 border-gray-600 text-gray-300 hover:border-primary-500 hover:text-primary-400 px-6 sm:px-8 lg:px-10 py-3 sm:py-3.5 lg:py-4 rounded-button text-sm sm:text-base font-semibold transition-all duration-300 transform hover:scale-105 relative overflow-hidden"
             >
               <div className="pointer-events-none absolute inset-0 bg-primary-500/10 opacity-0 -translate-x-[120%] group-hover:opacity-100 group-hover:translate-x-[120%] transition-all duration-400 ease-out will-change-transform"></div>
               Pelajari Lebih Lanjut
@@ -45,7 +45,7 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="grid md:grid-cols-4 gap-8 lg:gap-12 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12 mb-12 sm:mb-16">
           <div>
             <div className="flex items-center space-x-3 mb-6 group">
               <img 
