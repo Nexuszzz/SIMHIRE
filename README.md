@@ -1,4 +1,4 @@
-# 🚀 WengDev - Platform Rekrutmen Terintegrasi SimHire
+#  Platform Rekrutmen Terintegrasi SimHire
 
 > **Demo Lomba Web Development 2025** | React 18 + TypeScript + Vite + Tailwind CSS
 
@@ -543,7 +543,6 @@ MIT License - Free to use untuk lomba & learning
 
 <div align="center">
 
-### **Built with ❤️ for Lomba Web Development 2025**
 
 🎯 **Demo-Ready** | 🏆 **Competition-Ready** | ✨ **Production-Quality**
 
