@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,6 +38,30 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({ isOpen, onClose, jobData,
     portfolio: '',
     agreeTerms: false
   });
+  const [coverLetterDraft, setCoverLetterDraft] = useState('');
+  const [showTemplates, setShowTemplates] = useState(false);
+  
+  // Load saved draft from localStorage
+  useEffect(() => {
+    if (isOpen && jobData.id) {
+      const savedDraft = localStorage.getItem(`cover_letter_draft_${jobData.id}`);
+      if (savedDraft) {
+        setFormData(prev => ({ ...prev, coverLetter: savedDraft }));
+        setCoverLetterDraft(savedDraft);
+      }
+    }
+  }, [isOpen, jobData.id]);
+  
+  // Auto-save draft every 3 seconds
+  useEffect(() => {
+    if (formData.coverLetter && jobData.id && step === 2) {
+      const timer = setTimeout(() => {
+        localStorage.setItem(`cover_letter_draft_${jobData.id}`, formData.coverLetter);
+        toast.success('Draft tersimpan otomatis', { duration: 1000 });
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [formData.coverLetter, jobData.id, step]);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -106,6 +130,10 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({ isOpen, onClose, jobData,
   };
 
   const handleClose = () => {
+    // Hapus draft setelah submit sukses
+    if (step === 3 && jobData.id) {
+      localStorage.removeItem(`cover_letter_draft_${jobData.id}`);
+    }
     setStep(1);
     setFormData({
       fullName: '',
@@ -116,7 +144,89 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({ isOpen, onClose, jobData,
       portfolio: '',
       agreeTerms: false
     });
+    setShowTemplates(false);
     onClose();
+  };
+  
+  // Cover letter templates
+  const getCoverLetterTemplate = (jobTitle: string) => {
+    const templates = {
+      default: `Kepada Yth. Tim Rekrutmen ${jobData.company},
+
+Saya sangat tertarik untuk melamar posisi ${jobTitle} di ${jobData.company}. Dengan latar belakang pengalaman saya di bidang terkait, saya yakin dapat memberikan kontribusi positif bagi tim Anda.
+
+Saya memiliki pengalaman dalam [sebutkan pengalaman relevan] dan menguasai [sebutkan skills]. Saya sangat antusias untuk dapat bergabung dengan tim ${jobData.company} dan berkontribusi mencapai tujuan perusahaan.
+
+Terima kasih atas waktu dan pertimbangan Anda. Saya berharap dapat berdiskusi lebih lanjut mengenai bagaimana saya dapat berkontribusi di ${jobData.company}.
+
+Hormat saya,
+${formData.fullName || '[Nama Anda]'}`,
+      
+      developer: `Kepada Yth. Tim Rekrutmen ${jobData.company},
+
+Saya menulis surat ini untuk melamar posisi ${jobTitle}. Sebagai developer dengan pengalaman [X] tahun, saya telah mengerjakan berbagai proyek yang melibatkan teknologi modern dan best practices.
+
+Keahlian teknis saya meliputi:
+• Pengembangan aplikasi menggunakan [teknologi]
+• Problem solving dan debugging yang efisien
+• Kolaborasi dalam tim agile/scrum
+
+Saya tertarik dengan ${jobData.company} karena reputasinya dalam inovasi teknologi. Portfolio saya dapat dilihat di ${formData.portfolio || '[Link Portfolio]'}.
+
+Saya berharap dapat mendiskusikan bagaimana skills saya dapat membantu mencapai goals tim Anda.
+
+Best regards,
+${formData.fullName || '[Nama Anda]'}`,
+
+      designer: `Dear Hiring Team at ${jobData.company},
+
+I am excited to apply for the ${jobTitle} position. As a designer passionate about creating meaningful user experiences, I believe I would be a great fit for your team.
+
+My design philosophy centers around:
+• User-centered design thinking
+• Clean, functional aesthetics
+• Collaboration with developers and stakeholders
+
+I admire ${jobData.company}'s commitment to excellent design and would love to contribute to your creative projects.
+
+Thank you for considering my application. I look forward to discussing how my design skills can add value to your team.
+
+Warm regards,
+${formData.fullName || '[Your Name]'}`,
+
+      marketing: `Kepada Tim HR ${jobData.company},
+
+Saya dengan antusias melamar posisi ${jobTitle}. Dengan pengalaman di digital marketing dan content strategy, saya siap membantu ${jobData.company} mencapai target growth.
+
+Pencapaian saya meliputi:
+• Meningkatkan engagement [X]% melalui kampanye kreatif
+• Mengelola budget advertising dengan ROI optimal
+• Menganalisis data untuk strategi berbasis insight
+
+Saya terkesan dengan strategi marketing ${jobData.company} dan ingin berkontribusi dengan ide-ide fresh dan data-driven approach.
+
+Terima kasih atas kesempatan ini.
+
+Salam,
+${formData.fullName || '[Nama Anda]'}`
+    };
+    
+    const jobLower = jobTitle.toLowerCase();
+    if (jobLower.includes('developer') || jobLower.includes('programmer') || jobLower.includes('engineer')) {
+      return templates.developer;
+    } else if (jobLower.includes('design') || jobLower.includes('ui') || jobLower.includes('ux')) {
+      return templates.designer;
+    } else if (jobLower.includes('marketing') || jobLower.includes('social media')) {
+      return templates.marketing;
+    }
+    return templates.default;
+  };
+  
+  const useTemplate = () => {
+    const template = getCoverLetterTemplate(jobData.title);
+    setFormData(prev => ({ ...prev, coverLetter: template }));
+    setShowTemplates(false);
+    toast.success('Template diterapkan! Silakan personalisasi sesuai kebutuhan.');
   };
 
   return (
@@ -257,28 +367,103 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({ isOpen, onClose, jobData,
             </DialogHeader>
 
             <div className="space-y-4">
+              {/* Template Button */}
+              <div className="flex justify-between items-center">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowTemplates(!showTemplates)}
+                  className="text-xs"
+                >
+                  <FileText className="w-3 h-3 mr-1" />
+                  {showTemplates ? 'Tutup Template' : 'Gunakan Template'}
+                </Button>
+                {formData.coverLetter && (
+                  <span className="text-xs text-gray-500">
+                    Draft tersimpan otomatis
+                  </span>
+                )}
+              </div>
+
+              {/* Template Preview */}
+              {showTemplates && (
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="font-medium text-gray-900 mb-2 text-sm">✨ Template Cover Letter</h4>
+                  <p className="text-xs text-gray-600 mb-3">
+                    Kami telah menyiapkan template yang disesuaikan dengan posisi <span className="font-semibold">{jobData.title}</span>
+                  </p>
+                  <Button
+                    type="button"
+                    onClick={useTemplate}
+                    size="sm"
+                    className="w-full"
+                  >
+                    Gunakan Template Ini
+                  </Button>
+                </div>
+              )}
+              
               <div>
-                <Label htmlFor="coverLetter">Cover Letter *</Label>
+                <div className="flex justify-between items-center mb-2">
+                  <Label htmlFor="coverLetter">Cover Letter *</Label>
+                  <span className={`text-xs ${
+                    formData.coverLetter.length < 100 ? 'text-red-600' :
+                    formData.coverLetter.length < 200 ? 'text-yellow-600' :
+                    'text-green-600'
+                  }`}>
+                    {formData.coverLetter.length} / 500 karakter
+                    {formData.coverLetter.length < 100 && ' (minimal 100)'}
+                  </span>
+                </div>
                 <Textarea
                   id="coverLetter"
-                  placeholder="Tulis tentang pengalaman, keahlian, dan motivasi Anda untuk posisi ini..."
+                  placeholder="Contoh:
+
+Kepada Yth. Tim Rekrutmen [Perusahaan],
+
+Saya sangat tertarik untuk melamar posisi ini karena...
+
+Pengalaman saya meliputi:
+• [Pengalaman 1]
+• [Pengalaman 2]
+
+Saya yakin dapat berkontribusi...
+
+Hormat saya,
+[Nama Anda]"
                   value={formData.coverLetter}
-                  onChange={(e) => handleInputChange('coverLetter', e.target.value)}
-                  rows={8}
-                  className="mt-1 resize-none"
+                  onChange={(e) => handleInputChange('coverLetter', e.target.value.slice(0, 500))}
+                  rows={12}
+                  className="mt-1 resize-none font-mono text-sm"
                 />
-                <p className="text-xs text-gray-500 mt-1">Minimal 100 karakter</p>
+                
+                {/* Character Progress Bar */}
+                <div className="mt-2">
+                  <div className="w-full bg-gray-200 rounded-full h-1.5">
+                    <div 
+                      className={`h-1.5 rounded-full transition-all ${
+                        formData.coverLetter.length < 100 ? 'bg-red-500' :
+                        formData.coverLetter.length < 200 ? 'bg-yellow-500' :
+                        'bg-green-500'
+                      }`}
+                      style={{ width: `${Math.min((formData.coverLetter.length / 500) * 100, 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
               </div>
 
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <div className="flex gap-2">
                   <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-blue-900 mb-1">Tips Cover Letter</h4>
-                    <ul className="text-sm text-blue-700 space-y-1">
-                      <li>• Jelaskan mengapa Anda tertarik dengan posisi ini</li>
-                      <li>• Sebutkan keahlian relevan yang Anda miliki</li>
-                      <li>• Tunjukkan antusiasme dan motivasi Anda</li>
+                    <h4 className="font-medium text-blue-900 mb-1 text-sm">💡 Tips Cover Letter yang Menarik</h4>
+                    <ul className="text-xs text-blue-700 space-y-1">
+                      <li>✅ Jelaskan MENGAPA Anda tertarik dengan posisi & perusahaan ini</li>
+                      <li>✅ Sebutkan 2-3 keahlian/pengalaman yang RELEVAN dengan job description</li>
+                      <li>✅ Tunjukkan antusiasme dan motivasi Anda dengan contoh konkret</li>
+                      <li>✅ Gunakan bahasa profesional tapi tetap personal</li>
+                      <li>❌ Hindari copy-paste dari CV atau template generik</li>
                     </ul>
                   </div>
                 </div>
@@ -306,7 +491,7 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({ isOpen, onClose, jobData,
                 className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800"
               >
                 <FileText className="w-4 h-4 mr-2" />
-                {isSubmitting ? 'Mengirim...' : 'Kirim Lamaran'}
+                {isSubmitting ? 'Mengirim...' : `Kirim Lamaran ${formData.coverLetter.length >= 100 ? '✓' : ''}`}
               </Button>
             </div>
           </>

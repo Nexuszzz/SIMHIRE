@@ -37,6 +37,8 @@ const CompanySettings: React.FC = () => {
     hiringStatus: 'active'
   });
   const [loading, setLoading] = useState(false);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
 
   useEffect(() => {
     const companyProfile = getCompanyProfile();
@@ -55,6 +57,11 @@ const CompanySettings: React.FC = () => {
         twitter: companyProfile.socialLinks?.twitter || '',
         hiringStatus: companyProfile.hiringStatus as CompanyProfile['hiringStatus']
       });
+      
+      // Load logo preview dari localStorage
+      if (companyProfile.logoUrl) {
+        setLogoPreview(companyProfile.logoUrl);
+      }
     }
   }, []);
 
@@ -80,6 +87,7 @@ const CompanySettings: React.FC = () => {
         website: formData.website || undefined,
         phone: formData.phone || undefined,
         email: formData.email || undefined,
+        logoUrl: logoPreview || undefined, // Save logo
         socialLinks: {
           linkedin: formData.linkedin || undefined,
           twitter: formData.twitter || undefined
@@ -97,6 +105,42 @@ const CompanySettings: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+  
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Validasi file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('File harus berupa gambar (JPG, PNG)');
+      return;
+    }
+    
+    // Validasi file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Ukuran file maksimal 2MB');
+      return;
+    }
+    
+    setUploadingLogo(true);
+    
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setLogoPreview(reader.result as string);
+      setUploadingLogo(false);
+      toast.success('Logo berhasil diupload! Jangan lupa klik Simpan Perubahan.');
+    };
+    reader.onerror = () => {
+      setUploadingLogo(false);
+      toast.error('Gagal membaca file');
+    };
+    reader.readAsDataURL(file);
+  };
+  
+  const removeLogo = () => {
+    setLogoPreview(null);
+    toast.success('Logo dihapus. Klik Simpan Perubahan untuk konfirmasi.');
   };
 
   const getStatusLabel = (status: string) => {
@@ -348,12 +392,42 @@ const CompanySettings: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="text-center">
-                <div className="w-24 h-24 bg-gradient-to-r from-accent-blue to-primary-600 rounded-card flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
-                  {formData.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                </div>
-                <Button variant="outline">
+                {/* Logo Preview */}
+                {logoPreview ? (
+                  <div className="relative inline-block mb-4">
+                    <img 
+                      src={logoPreview} 
+                      alt="Company Logo" 
+                      className="w-24 h-24 rounded-lg object-cover mx-auto border-2 border-gray-200"
+                    />
+                    <button
+                      onClick={removeLogo}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full hover:bg-red-600 flex items-center justify-center text-xs"
+                      title="Hapus logo"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ) : (
+                  <div className="w-24 h-24 bg-gradient-to-r from-accent-blue to-primary-600 rounded-lg flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
+                    {formData.name.split(' ').map(n => n[0]).join('').toUpperCase() || 'CO'}
+                  </div>
+                )}
+                
+                <input
+                  type="file"
+                  id="logo-upload"
+                  accept="image/png,image/jpeg,image/jpg"
+                  onChange={handleLogoUpload}
+                  className="hidden"
+                />
+                <Button 
+                  variant="outline" 
+                  onClick={() => document.getElementById('logo-upload')?.click()}
+                  disabled={uploadingLogo}
+                >
                   <Upload className="w-4 h-4 mr-2" />
-                  Upload Logo
+                  {uploadingLogo ? 'Uploading...' : logoPreview ? 'Ganti Logo' : 'Upload Logo'}
                 </Button>
                 <p className="text-xs text-gray-500 mt-2">PNG, JPG maksimal 2MB</p>
               </div>
