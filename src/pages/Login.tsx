@@ -10,6 +10,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordStrength, setPasswordStrength] = useState(0); // 0-4
   const [passwordHint, setPasswordHint] = useState('');
   const navigate = useNavigate();

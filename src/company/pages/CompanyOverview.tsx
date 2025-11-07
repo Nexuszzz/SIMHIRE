@@ -251,7 +251,8 @@ const CompanyOverview: React.FC = () => {
                          application.stage === 'screening' ? 'Screening' :
                          application.stage === 'interview' ? 'Interview' :
                          application.stage === 'offer' ? 'Penawaran' :
-                         application.stage === 'hired' ? 'Diterima' : 'Ditolak'}
+                         application.stage === 'accepted' ? 'Diterima' :
+                         application.stage === 'rejected' ? 'Ditolak' : 'Unknown'}
                       </Badge>
                       {application.scoreOverall && (
                         <div className="flex items-center gap-1">

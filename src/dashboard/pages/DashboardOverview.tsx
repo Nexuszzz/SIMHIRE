@@ -6,8 +6,6 @@ import {
   Award, 
   Calendar,
   MapPin,
-  Clock,
-  Building2,
   ArrowRight,
   BarChart3,
   Target,
@@ -16,7 +14,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { getDashboardStats, getUpcomingInterviews, loadSimulasiResults, type Application } from '@/lib/storage';
+import { getDashboardStats, getUpcomingInterviews, loadSimulasiResults } from '@/lib/storage';
 import { GradientCard } from '@/components/ui/gradient-card';
 
 const DashboardOverview = () => {
@@ -41,9 +39,6 @@ const DashboardOverview = () => {
     const simulasi = loadSimulasiResults();
     setSimulasiResults(simulasi);
   }, []);
-
-  // Calculate profile views (mock with slight variation)
-  const profileViews = 120 + Math.floor(Math.random() * 50);
 
   // Real stats from localStorage with gradient config
   const stats = [

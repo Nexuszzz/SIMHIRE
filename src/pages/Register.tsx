@@ -28,7 +28,8 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [passwordStrength, setPasswordStrength] = useState(0);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordStrength, setPasswordStrength] = useState(0); // 0-4
   const [confirmError, setConfirmError] = useState<string | null>(null);
   
   const navigate = useNavigate();

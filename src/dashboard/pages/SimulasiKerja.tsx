@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Code, Server, TrendingUp, Palette, BarChart3, PenTool, 
-  Star, Users, Clock, Trophy, Target, Zap, Award, Search,
+  Star, Users, Clock, Trophy, Target, Award, Search,
   Filter, ChevronRight, Play
 } from 'lucide-react';
 import { SIMULASI_CATEGORIES, type SimulasiCategory, getDifficultyColor } from '@/lib/simulasiData';

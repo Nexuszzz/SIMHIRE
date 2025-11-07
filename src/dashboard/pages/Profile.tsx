@@ -2,10 +2,8 @@ import { useState, useEffect } from 'react';
 import { getTopProjects, PortfolioProject } from '@/lib/portfolio';
 import { loadSimulasiResults } from '@/lib/storage';
 import { useUser } from '../../context/UserContext';
-import { Pencil, Save, User, Mail, Key, ShieldCheck, X, CheckCircle2, Award, Briefcase, MapPin, Globe, Github, Linkedin, ExternalLink, Trophy, Target, Zap, Star } from 'lucide-react';
+import { Pencil, Save, User, Mail, Key, ShieldCheck, X, CheckCircle2, Award, Briefcase, MapPin, Globe, Github, Linkedin, Trophy, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GradientCard } from '@/components/ui/gradient-card';
-import { StatBadge } from '@/components/ui/stat-badge';
 
 const Profile: React.FC = () => {
   const { user, updateProfile } = useUser();
