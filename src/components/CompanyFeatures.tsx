@@ -88,7 +88,7 @@ const CompanyFeatures = () => {
   ];
 
   return (
-    <section ref={sectionRef} className="py-20 lg:py-32 bg-gray-50 relative overflow-hidden transition-colors">
+    <section id="company-features" ref={sectionRef} className="py-20 lg:py-32 bg-gray-50 relative overflow-hidden transition-colors">
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-primary-100 rounded-full blur-3xl opacity-20 animate-pulse"></div>

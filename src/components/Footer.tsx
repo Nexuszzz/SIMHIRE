@@ -66,15 +66,24 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-6 text-primary-400">Platform</h3>
             <ul className="space-y-3 text-gray-400">
               <li>
-                <a 
-                  href="#candidate-features" 
-                  className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group"
+                <button 
+                  onClick={() => {
+                    // Scroll to candidate features section
+                    const element = document.getElementById('candidate-features');
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } else {
+                      // If not on home page, navigate to home first
+                      navigate('/#candidate-features');
+                    }
+                  }}
+                  className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group text-left"
                   onMouseEnter={() => setHoveredLink('Untuk Kandidat')}
                   onMouseLeave={() => setHoveredLink(null)}
                 >
                   Untuk Kandidat
                   <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 transition-all duration-300 ${hoveredLink === 'Untuk Kandidat' ? 'w-full' : ''}`}></span>
-                </a>
+                </button>
               </li>
               <li>
                 <button 
