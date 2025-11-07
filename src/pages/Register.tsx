@@ -63,18 +63,86 @@ const Register = () => {
 
   const handleBasicInfoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Reset errors
+    setEmailError('');
+    setPasswordError('');
+    setConfirmError('');
+    
+    // Validasi email
+    if (!email.trim()) {
+      setEmailError('Email tidak boleh kosong');
+      return;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError('Format email tidak valid');
+      return;
+    }
+    
+    // Validasi password
+    if (!password) {
+      setPasswordError('Password tidak boleh kosong');
+      return;
+    }
+    
+    if (password.length < 6) {
+      setPasswordError('Password minimal 6 karakter');
+      return;
+    }
+    
+    // Validasi konfirmasi password
+    if (!confirm) {
+      setConfirmError('Konfirmasi password tidak boleh kosong');
+      return;
+    }
+    
     if (password !== confirm) {
       setConfirmError('Password dan konfirmasi tidak sama');
       return;
     }
+    
+    // Lanjut ke step 3
     setStep(3);
   };
 
   const handleFinalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validasi nama lengkap
+    if (!name.trim()) {
+      alert('Nama lengkap tidak boleh kosong');
+      return;
+    }
+    
+    if (name.trim().length < 3) {
+      alert('Nama lengkap minimal 3 karakter');
+      return;
+    }
+    
+    // Validasi phone (opsional tapi jika diisi harus valid)
+    if (phone && phone.length < 10) {
+      alert('Nomor telepon tidak valid');
+      return;
+    }
+    
     setLoading(true);
+    
+    // Simulasi registrasi
     setTimeout(() => {
       setLoading(false);
+      // Simpan data user ke localStorage (untuk demo)
+      const userData = {
+        email,
+        name,
+        phone,
+        role,
+        registeredAt: new Date().toISOString()
+      };
+      localStorage.setItem('simhire_registered_user', JSON.stringify(userData));
+      
+      // Redirect berdasarkan role
       navigate(role === 'company' ? '/company' : '/dashboard');
     }, 1500);
   };

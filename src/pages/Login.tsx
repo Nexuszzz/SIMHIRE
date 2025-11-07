@@ -72,9 +72,32 @@ const Login = () => {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Reset errors
+    setEmailError('');
+    setPasswordError('');
+    
+    // Validasi input tidak kosong
+    if (!email.trim()) {
+      setEmailError('Email tidak boleh kosong');
+      return;
+    }
+    
+    if (!password) {
+      setPasswordError('Password tidak boleh kosong');
+      return;
+    }
+    
+    // Validasi format email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError('Format email tidak valid');
+      return;
+    }
+    
     setLoading(true);
     
-    // Validasi dengan dummy accounts
+    // Simulasi API call dengan validasi credentials
     setTimeout(() => {
       // Check kandidat account
       if (email === DEMO_ACCOUNTS.candidate.email && password === DEMO_ACCOUNTS.candidate.password) {
@@ -89,6 +112,7 @@ const Login = () => {
       // Invalid credentials
       else {
         setEmailError('Email atau password salah');
+        setPasswordError('Silakan periksa kembali email dan password Anda');
         setLoading(false);
       }
     }, 1200);
