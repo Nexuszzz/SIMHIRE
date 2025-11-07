@@ -77,19 +77,38 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a 
-                  href="#company-features" 
-                  className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group"
+                <button 
+                  onClick={() => {
+                    // Scroll to company features section
+                    const element = document.getElementById('company-features');
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } else {
+                      // If not on home page, navigate to home first
+                      navigate('/#company-features');
+                    }
+                  }}
+                  className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group text-left"
                   onMouseEnter={() => setHoveredLink('Untuk Perusahaan')}
                   onMouseLeave={() => setHoveredLink(null)}
                 >
                   Untuk Perusahaan
                   <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 transition-all duration-300 ${hoveredLink === 'Untuk Perusahaan' ? 'w-full' : ''}`}></span>
-                </a>
+                </button>
               </li>
               <li>
                 <button 
-                  onClick={() => navigate('/dashboard/simulasi-kerja')}
+                  onClick={() => {
+                    // Check if user is logged in
+                    const user = localStorage.getItem('simhire_user');
+                    if (user) {
+                      // Already logged in, go to simulasi page
+                      navigate('/dashboard/simulasi-kerja');
+                    } else {
+                      // Not logged in, redirect to login with return URL
+                      navigate('/login', { state: { returnUrl: '/dashboard/simulasi-kerja' } });
+                    }
+                  }}
                   className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group text-left"
                   onMouseEnter={() => setHoveredLink('Simulasi Gratis')}
                   onMouseLeave={() => setHoveredLink(null)}

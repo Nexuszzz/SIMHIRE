@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Mail, Lock, Loader2, ArrowLeft, Linkedin, AtSign, Eye, EyeOff, AlertCircle } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { useUser } from '@/context/UserContext';
 
@@ -13,7 +13,11 @@ const Login = () => {
   const [passwordStrength, setPasswordStrength] = useState(0); // 0-4
   const [passwordHint, setPasswordHint] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
   const { mockLogin, mockCompanyLogin } = useUser();
+  
+  // Get return URL from location state
+  const returnUrl = (location.state as { returnUrl?: string })?.returnUrl || '/dashboard';
 
   // Parallax motion values
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -102,11 +106,13 @@ const Login = () => {
       // Check kandidat account
       if (email === DEMO_ACCOUNTS.candidate.email && password === DEMO_ACCOUNTS.candidate.password) {
         mockLogin();
-        navigate('/dashboard');
+        // Use returnUrl if it's for candidate, otherwise default to /dashboard
+        navigate(returnUrl.startsWith('/dashboard') ? returnUrl : '/dashboard');
       }
       // Check company account
       else if (email === DEMO_ACCOUNTS.company.email && password === DEMO_ACCOUNTS.company.password) {
         mockCompanyLogin();
+        // Company always goes to /company
         navigate('/company');
       }
       // Invalid credentials
