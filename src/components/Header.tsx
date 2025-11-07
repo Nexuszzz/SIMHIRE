@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 
@@ -91,56 +91,110 @@ const Header = () => {
           </div>
           
           <button 
-            className="lg:hidden transform hover:scale-110 transition-transform duration-300"
+            className="lg:hidden transform hover:scale-110 transition-transform duration-300 z-50"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            <Menu className={`w-6 h-6 transition-transform duration-300 ${isMobileMenuOpen ? 'rotate-90' : ''}`} />
+            {isMobileMenuOpen ? (
+              <X className="w-6 h-6 text-white" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
         </div>
         
-        {/* Mobile Menu */}
-        <div className={`lg:hidden transition-all duration-500 overflow-hidden ${
-          isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        {/* Mobile Sidebar Overlay */}
+        {isMobileMenuOpen && (
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+        
+        {/* Mobile Sidebar */}
+        <div className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-gradient-to-br from-gray-900 via-gray-800 to-primary-900 shadow-2xl z-50 lg:hidden transform transition-transform duration-300 ease-in-out ${
+          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}>
-          <div className="py-4 space-y-4 bg-gray-800/95 backdrop-blur-lg rounded-lg mt-2 mx-4">
-            {[
-              { label: 'Beranda', href: '#home' },
-              { label: 'Fitur', href: '#candidate-features' },
-              { label: 'Cara Kerja', href: '#how-it-works' },
-              { label: 'Dampak', href: '#impact' },
-            ].map((item, index) => (
-              <a 
-                key={item.href}
-                href={item.href}
-                onClick={(e) => handleNavClick(e, item.href)}
-                className="block px-6 py-2 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all duration-300 transform hover:translate-x-2"
-                style={{ animationDelay: `${index * 50}ms` }}
+          <div className="flex flex-col h-full">
+            {/* Sidebar Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-700/50">
+              <Link to="/" className="flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
+                <img 
+                  src="/logo.png" 
+                  alt="SimHire Logo" 
+                  className="h-8 w-auto"
+                />
+                <span className="ml-2 text-lg font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
+                  SimHire
+                </span>
+              </Link>
+              <button 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
               >
-                {item.label}
-              </a>
-            ))}
-            <div className="px-6 py-2 space-y-2">
-              {!user && (
-                <>
-                  <Link to="/login" className="w-full block text-left text-gray-300 hover:text-white transition-colors">
-                    Masuk
-                  </Link>
-                  <Link to="/register" className="group w-full inline-flex justify-center bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 px-4 py-2 rounded-lg font-medium transition-all duration-300 relative overflow-hidden">
-                    <span className="relative z-10">Mulai</span>
-                    <span className="pointer-events-none absolute inset-0 bg-white/10 opacity-0 -translate-x-[120%] group-hover:opacity-100 group-hover:translate-x-[120%] transition-all duration-500 ease-out will-change-transform"></span>
-                  </Link>
-                </>
-              )}
-              {user && (
-                <Link to="/dashboard/profile" className="flex items-center space-x-3 p-2 rounded-lg hover:bg-emerald-500/10 transition">
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center font-semibold text-white text-sm shadow ${user.avatarColor||'bg-gray-400'}`}>{user.name.charAt(0)}</div>
-                  <div className="text-left">
-                    <p className="text-white text-sm font-medium leading-none line-clamp-1">{user.name}</p>
-                    <p className="text-emerald-300 text-xs">Lihat Profil</p>
+                <X className="w-5 h-5 text-white" />
+              </button>
+            </div>
+
+            {/* User Profile Section (if logged in) */}
+            {user && (
+              <div className="p-6 border-b border-gray-700/50">
+                <Link 
+                  to="/dashboard/profile" 
+                  className="flex items-center space-x-3 p-3 rounded-lg hover:bg-emerald-500/10 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center font-semibold text-white shadow-lg ${user.avatarColor||'bg-gray-400'}`}>
+                    {user.name.charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-medium truncate">{user.name}</p>
+                    <p className="text-emerald-300 text-sm">Lihat Profil</p>
                   </div>
                 </Link>
-              )}
-            </div>
+              </div>
+            )}
+
+            {/* Navigation Links */}
+            <nav className="flex-1 overflow-y-auto py-6">
+              <div className="px-4 space-y-2">
+                {[
+                  { label: 'Beranda', href: '#home' },
+                  { label: 'Fitur', href: '#candidate-features' },
+                  { label: 'Cara Kerja', href: '#how-it-works' },
+                  { label: 'Dampak', href: '#impact' },
+                ].map((item, index) => (
+                  <a 
+                    key={item.href}
+                    href={item.href}
+                    onClick={(e) => handleNavClick(e, item.href)}
+                    className="flex items-center px-4 py-3 text-white hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-all duration-300 transform hover:translate-x-1"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <span className="font-medium">{item.label}</span>
+                  </a>
+                ))}
+              </div>
+            </nav>
+
+            {/* Bottom Action Buttons */}
+            {!user && (
+              <div className="p-6 border-t border-gray-700/50 space-y-3">
+                <Link 
+                  to="/login" 
+                  className="block w-full text-center px-4 py-3 text-white border border-emerald-500 rounded-lg font-medium hover:bg-emerald-500/10 transition-all duration-300"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Masuk
+                </Link>
+                <Link 
+                  to="/register" 
+                  className="block w-full text-center bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 px-4 py-3 rounded-lg font-medium text-white transition-all duration-300 shadow-lg"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Mulai Sekarang
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </nav>
