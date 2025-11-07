@@ -25,7 +25,7 @@ const DashboardJobsHome = lazy(() => import('./dashboard/pages/DashboardJobsHome
 const DashboardOverview = lazy(() => import('./dashboard/pages/DashboardOverview'));
 const JobFinder = lazy(() => import('./dashboard/pages/JobFinder'));
 const JobSimulation = lazy(() => import('./dashboard/pages/JobSimulation'));
-const FeaturePlaceholder = lazy(() => import('./dashboard/pages/FeaturePlaceholder'));
+const SkillSnapshot = lazy(() => import('./dashboard/pages/SkillSnapshot'));
 const ApprenticeshipTracker = lazy(() => import('./dashboard/pages/ApprenticeshipTracker'));
 const ApplicationTracker = lazy(() => import('./dashboard/pages/ApplicationTracker'));
 const AutoCV = lazy(() => import('./dashboard/pages/AutoCV'));
@@ -186,7 +186,7 @@ function App() {
               <Route path="application-tracker" element={<ApplicationTracker />} />
               <Route path="auto-cv" element={<AutoCV />} />
               <Route path="portfolio" element={<Portfolio />} />
-              <Route path="skill-snapshot" element={<FeaturePlaceholder title="Ringkasan Skill" />} />
+              <Route path="skill-snapshot" element={<SkillSnapshot />} />
               <Route path="profile" element={<Profile />} />
               <Route path="settings" element={<Settings />} />
             </Route>

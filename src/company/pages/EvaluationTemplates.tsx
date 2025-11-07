@@ -13,7 +13,14 @@ import { handleError } from '@/lib/errors';
 const EvaluationTemplates: React.FC = () => {
   const [templates, setTemplates] = useState<EvaluationTemplate[]>([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState<EvaluationTemplate | null>(null);
+  const [templateToEdit, setTemplateToEdit] = useState<EvaluationTemplate | null>(null);
+  const [editForm, setEditForm] = useState({
+    name: '',
+    description: '',
+    criteria: [] as EvaluationCriteria[]
+  });
 
   useEffect(() => {
     setTemplates(getEvaluationTemplates());
@@ -83,6 +90,61 @@ const EvaluationTemplates: React.FC = () => {
   const handleDeleteClick = (template: EvaluationTemplate) => {
     setTemplateToDelete(template);
     setShowDeleteModal(true);
+  };
+
+  const handleEditClick = (template: EvaluationTemplate) => {
+    setTemplateToEdit(template);
+    setEditForm({
+      name: template.name,
+      description: template.description,
+      criteria: [...template.criteria]
+    });
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = () => {
+    if (!templateToEdit) return;
+
+    try {
+      const updatedTemplates = templates.map(t =>
+        t.id === templateToEdit.id
+          ? { ...t, name: editForm.name, description: editForm.description, criteria: editForm.criteria }
+          : t
+      );
+      setTemplates(updatedTemplates);
+      
+      // Save to localStorage
+      localStorage.setItem('simhire_evaluation_templates', JSON.stringify(updatedTemplates));
+      
+      toast.success('Template berhasil diperbarui');
+      setShowEditModal(false);
+      setTemplateToEdit(null);
+    } catch (error) {
+      handleError(error, 'handleSaveEdit');
+      toast.error('Gagal memperbarui template');
+    }
+  };
+
+  const updateCriteria = (index: number, field: keyof EvaluationCriteria, value: any) => {
+    const newCriteria = [...editForm.criteria];
+    newCriteria[index] = { ...newCriteria[index], [field]: value };
+    setEditForm({ ...editForm, criteria: newCriteria });
+  };
+
+  const addCriteria = () => {
+    const newCriterion: EvaluationCriteria = {
+      id: `criterion-${Date.now()}`,
+      label: 'Kriteria Baru',
+      description: 'Deskripsi kriteria',
+      weight: 10,
+      maxScore: 10
+    };
+    setEditForm({ ...editForm, criteria: [...editForm.criteria, newCriterion] });
+  };
+
+  const removeCriteria = (index: number) => {
+    const newCriteria = editForm.criteria.filter((_, i) => i !== index);
+    setEditForm({ ...editForm, criteria: newCriteria });
   };
 
   const handleConfirmDelete = () => {
@@ -197,7 +259,7 @@ const EvaluationTemplates: React.FC = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => toast.info('Edit feature coming soon!')}
+                      onClick={() => handleEditClick(template)}
                     >
                       <Edit2 className="w-4 h-4" />
                     </Button>
@@ -358,6 +420,183 @@ const EvaluationTemplates: React.FC = () => {
                     >
                       <Trash2 className="w-4 h-4" />
                       Hapus Template
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Edit Template Modal */}
+        <AnimatePresence>
+          {showEditModal && templateToEdit && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+              onClick={() => setShowEditModal(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                className="bg-white rounded-xl shadow-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-3 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600">
+                    <Edit2 className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 text-lg">
+                      Edit Template
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Perbarui template evaluasi
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {/* Template Name */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Nama Template
+                    </label>
+                    <input
+                      type="text"
+                      value={editForm.name}
+                      onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Contoh: Template Interview HR"
+                    />
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Deskripsi
+                    </label>
+                    <textarea
+                      value={editForm.description}
+                      onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      rows={3}
+                      placeholder="Deskripsi template..."
+                    />
+                  </div>
+
+                  {/* Criteria */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Kriteria Penilaian
+                      </label>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={addCriteria}
+                        className="gap-1"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Tambah Kriteria
+                      </Button>
+                    </div>
+
+                    <div className="space-y-3">
+                      {editForm.criteria.map((criterion, index) => (
+                        <div key={criterion.id} className="p-4 border border-gray-200 rounded-lg space-y-2">
+                          <div className="flex items-start gap-2">
+                            <div className="flex-1 space-y-2">
+                              <input
+                                type="text"
+                                value={criterion.label}
+                                onChange={(e) => updateCriteria(index, 'label', e.target.value)}
+                                className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                placeholder="Nama kriteria"
+                              />
+                              <input
+                                type="text"
+                                value={criterion.description}
+                                onChange={(e) => updateCriteria(index, 'description', e.target.value)}
+                                className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                placeholder="Deskripsi kriteria"
+                              />
+                              <div className="flex gap-2">
+                                <div className="flex-1">
+                                  <label className="text-xs text-gray-600">Bobot (%)</label>
+                                  <input
+                                    type="number"
+                                    value={criterion.weight}
+                                    onChange={(e) => updateCriteria(index, 'weight', parseInt(e.target.value) || 0)}
+                                    className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                    min="0"
+                                    max="100"
+                                  />
+                                </div>
+                                <div className="flex-1">
+                                  <label className="text-xs text-gray-600">Skor Maksimal</label>
+                                  <input
+                                    type="number"
+                                    value={criterion.maxScore}
+                                    onChange={(e) => updateCriteria(index, 'maxScore', parseInt(e.target.value) || 0)}
+                                    className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                    min="1"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => removeCriteria(index)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Weight Validation */}
+                    <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600">Total Bobot:</span>
+                        <span className={`font-semibold ${
+                          calculateTotalWeight(editForm.criteria) === 100
+                            ? 'text-green-600'
+                            : 'text-red-600'
+                        }`}>
+                          {calculateTotalWeight(editForm.criteria)}%
+                        </span>
+                      </div>
+                      {calculateTotalWeight(editForm.criteria) !== 100 && (
+                        <p className="text-xs text-red-600 mt-1">
+                          Total bobot harus 100%
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3 pt-4 border-t">
+                    <Button
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => setShowEditModal(false)}
+                    >
+                      Batal
+                    </Button>
+                    <Button
+                      className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 gap-2"
+                      onClick={handleSaveEdit}
+                      disabled={calculateTotalWeight(editForm.criteria) !== 100 || !editForm.name}
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      Simpan Perubahan
                     </Button>
                   </div>
                 </div>

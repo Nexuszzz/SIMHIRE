@@ -333,18 +333,109 @@ const SimulasiDetail: React.FC = () => {
 
         {selectedTab === 'leaderboard' && (
           <div className="bg-white rounded-xl p-6 border border-gray-200">
-            <div className="text-center py-12">
-              <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                Leaderboard Coming Soon
-              </h3>
-              <p className="text-gray-600 mb-4">
-                Lihat leaderboard global untuk kategori ini
-              </p>
-              <Link to="/dashboard/simulasi-kerja/leaderboard">
-                <Button>View Global Leaderboard</Button>
-              </Link>
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600">
+                <Trophy className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">
+                  Leaderboard - {category?.name}
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Peringkat 10 besar peserta simulasi
+                </p>
+              </div>
             </div>
+
+            {(() => {
+              // Get all simulasi results and filter by category
+              const allResults = JSON.parse(localStorage.getItem('simhire_simulasi_results') || '[]') as SavedSimulasiResult[];
+              const categoryResults = allResults
+                .filter(r => r.categoryId === categoryId)
+                .sort((a, b) => b.percentage - a.percentage)
+                .slice(0, 10);
+
+              if (categoryResults.length === 0) {
+                return (
+                  <div className="text-center py-12">
+                    <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Belum Ada Peserta
+                    </h3>
+                    <p className="text-gray-600">
+                      Jadilah yang pertama menyelesaikan simulasi ini!
+                    </p>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="space-y-3">
+                  {categoryResults.map((result, index) => (
+                    <motion.div
+                      key={`${result.userId}-${result.completedAt}`}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className={`flex items-center gap-4 p-4 rounded-lg border-2 transition-all ${
+                        index === 0
+                          ? 'bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-300'
+                          : index === 1
+                          ? 'bg-gradient-to-r from-gray-50 to-slate-50 border-gray-300'
+                          : index === 2
+                          ? 'bg-gradient-to-r from-orange-50 to-amber-50 border-orange-300'
+                          : 'bg-gray-50 border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      {/* Rank Badge */}
+                      <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
+                        index === 0
+                          ? 'bg-gradient-to-br from-amber-400 to-yellow-500 text-white shadow-lg'
+                          : index === 1
+                          ? 'bg-gradient-to-br from-gray-400 to-slate-500 text-white shadow-lg'
+                          : index === 2
+                          ? 'bg-gradient-to-br from-orange-400 to-amber-500 text-white shadow-lg'
+                          : 'bg-white border-2 border-gray-300 text-gray-700'
+                      }`}>
+                        {index < 3 ? <Trophy className="w-6 h-6" /> : `#${index + 1}`}
+                      </div>
+
+                      {/* User Info */}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-gray-900 truncate">
+                          {result.userId === user?.id ? 'Anda' : `Peserta ${result.userId.slice(0, 8)}`}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(result.completedAt).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric'
+                          })}
+                        </p>
+                      </div>
+
+                      {/* Score */}
+                      <div className="text-right">
+                        <div className={`text-2xl font-bold ${
+                          result.percentage >= 85
+                            ? 'text-green-600'
+                            : result.percentage >= 70
+                            ? 'text-blue-600'
+                            : result.percentage >= 50
+                            ? 'text-yellow-600'
+                            : 'text-gray-600'
+                        }`}>
+                          {result.percentage}%
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          {result.totalScore}/{result.maxScore} poin
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              );
+            })()}
           </div>
         )}
       </div>
