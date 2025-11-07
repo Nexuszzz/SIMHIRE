@@ -97,9 +97,23 @@ const JobApplicants: React.FC = () => {
     setFilteredApplications(filtered);
   }, [applications, debouncedSearchTerm, statusFilter, sortBy]);
   
-  // Handle status update
+  // Handle status update with better feedback
   const handleStatusUpdate = (appId: string, newStatus: Application['status']) => {
-    const success = updateApplicationStatus(appId, newStatus);
+    const statusMessages = {
+      applied: 'Dikembalikan ke status "Melamar"',
+      screening: 'Kandidat dipindahkan ke tahap Screening',
+      interview: 'Kandidat diundang untuk Interview! 📅',
+      offer: 'Penawaran kerja dikirim ke kandidat! 🎉',
+      accepted: 'Kandidat diterima! Selamat! 🎊',
+      rejected: 'Kandidat ditolak'
+    };
+    
+    const success = updateApplicationStatus(
+      appId, 
+      newStatus,
+      undefined, // timeline description will be auto-generated
+      undefined  // optional company note
+    );
     
     if (success) {
       setApplications(prev =>
@@ -107,8 +121,10 @@ const JobApplicants: React.FC = () => {
           app.id === appId ? { ...app, status: newStatus } : app
         )
       );
-      toast.success('Status lamaran diperbarui', {
-        description: 'Kandidat akan menerima notifikasi perubahan status',
+      
+      toast.success(statusMessages[newStatus], {
+        description: 'Kandidat akan menerima notifikasi otomatis via email',
+        duration: 3000,
       });
     } else {
       toast.error('Gagal memperbarui status');
@@ -316,7 +332,7 @@ const JobApplicants: React.FC = () => {
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-4 mt-3 text-sm text-gray-600">
+                    <div className="flex items-center gap-4 mt-3 text-sm text-gray-600 flex-wrap">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
                         <span>Melamar {new Date(app.appliedAt).toLocaleDateString('id-ID')}</span>
@@ -328,9 +344,30 @@ const JobApplicants: React.FC = () => {
                         </div>
                       )}
                       {app.simulasiScores && Object.keys(app.simulasiScores).length > 0 && (
-                        <div className="flex items-center gap-1">
-                          <Award className="w-4 h-4" />
-                          <span>Skor Simulasi: {Math.round(Object.values(app.simulasiScores)[0])}/100</span>
+                        <div className="flex items-center gap-2">
+                          <Award className="w-4 h-4 text-yellow-600" />
+                          <div className="flex gap-1">
+                            {Object.entries(app.simulasiScores).slice(0, 3).map(([category, score]) => {
+                              const avgScore = score;
+                              const badgeColor = avgScore >= 80 ? 'bg-green-100 text-green-800 border-green-300' :
+                                                avgScore >= 60 ? 'bg-blue-100 text-blue-800 border-blue-300' :
+                                                'bg-yellow-100 text-yellow-800 border-yellow-300';
+                              return (
+                                <span
+                                  key={category}
+                                  className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${badgeColor}`}
+                                  title={`${category}: ${avgScore}/100`}
+                                >
+                                  {category.substring(0, 8)}: {Math.round(avgScore)}
+                                </span>
+                              );
+                            })}
+                            {Object.keys(app.simulasiScores).length > 3 && (
+                              <span className="text-xs text-gray-500">
+                                +{Object.keys(app.simulasiScores).length - 3} lainnya
+                              </span>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>

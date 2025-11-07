@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Mail, Phone, MapPin, Star, Download, MessageSquare, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, MapPin, Star, Download, MessageSquare, CheckCircle, XCircle, Clock, Calendar, StarOff } from 'lucide-react';
 import { getApplication, updateApplicationStage, addApplicationNote } from '@/lib/company/data';
 import { JobApplication, ApplicationStage } from '@/lib/company/types';
 import { Button } from '@/components/ui/button';
@@ -8,12 +8,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 
+// Scoring Criteria
+const scoringCriteria = [
+  { id: 'skills', label: 'Keterampilan Teknis', description: 'Kemampuan teknis sesuai posisi' },
+  { id: 'experience', label: 'Pengalaman Relevan', description: 'Pengalaman kerja yang sesuai' },
+  { id: 'education', label: 'Pendidikan', description: 'Latar belakang pendidikan' },
+  { id: 'communication', label: 'Komunikasi', description: 'Kemampuan komunikasi tertulis' },
+  { id: 'cultural_fit', label: 'Cultural Fit', description: 'Kesesuaian dengan budaya perusahaan' },
+];
+
 const stageLabels: Record<ApplicationStage, string> = {
   'applied': 'Melamar',
   'screening': 'Screening',
   'interview': 'Interview',
   'offer': 'Penawaran',
-  'hired': 'Diterima',
+  'accepted': 'Diterima',
   'rejected': 'Ditolak'
 };
 
@@ -22,7 +31,7 @@ const stageColors: Record<ApplicationStage, string> = {
   'screening': 'bg-yellow-100 text-yellow-800',
   'interview': 'bg-purple-100 text-purple-800',
   'offer': 'bg-green-100 text-green-800',
-  'hired': 'bg-primary-100 text-primary-800',
+  'accepted': 'bg-primary-100 text-primary-800',
   'rejected': 'bg-red-100 text-red-800'
 };
 
@@ -33,6 +42,66 @@ const ApplicantDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [noteText, setNoteText] = useState('');
   const [addingNote, setAddingNote] = useState(false);
+  const [showScoring, setShowScoring] = useState(false);
+  const [scores, setScores] = useState<Record<string, number>>({});
+  const [showInterviewSchedule, setShowInterviewSchedule] = useState(false);
+  const [interviewDate, setInterviewDate] = useState('');
+  const [interviewTime, setInterviewTime] = useState('');
+  const [interviewNotes, setInterviewNotes] = useState('');
+
+  // Load saved scores
+  useEffect(() => {
+    if (applicationId) {
+      const savedScores = localStorage.getItem(`applicant_scores_${applicationId}`);
+      if (savedScores) {
+        setScores(JSON.parse(savedScores));
+      }
+    }
+  }, [applicationId]);
+
+  const saveScore = (criteriaId: string, score: number) => {
+    const newScores = { ...scores, [criteriaId]: score };
+    setScores(newScores);
+    if (applicationId) {
+      localStorage.setItem(`applicant_scores_${applicationId}`, JSON.stringify(newScores));
+    }
+    toast.success('Skor disimpan');
+  };
+
+  const getAverageScore = () => {
+    const scoreValues = Object.values(scores);
+    if (scoreValues.length === 0) return 0;
+    const avg = scoreValues.reduce((a, b) => a + b, 0) / scoreValues.length;
+    return Math.round(avg * 10) / 10; // Round to 1 decimal
+  };
+
+  const scheduleInterview = () => {
+    if (!interviewDate || !interviewTime) {
+      toast.error('Mohon isi tanggal dan waktu interview');
+      return;
+    }
+
+    const interviewData = {
+      date: interviewDate,
+      time: interviewTime,
+      notes: interviewNotes,
+      scheduledAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem(`interview_${applicationId}`, JSON.stringify(interviewData));
+    
+    // Update status to interview
+    handleStageChange('interview');
+    
+    toast.success('Interview berhasil dijadwalkan! 📅', {
+      description: `${interviewDate} pukul ${interviewTime}`,
+    });
+
+    setShowInterviewSchedule(false);
+    setInterviewDate('');
+    setInterviewTime('');
+    setInterviewNotes('');
+  };
 
   useEffect(() => {
     const loadApplication = () => {
@@ -298,17 +367,96 @@ const ApplicantDetail: React.FC = () => {
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* Scoring Rubric */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Penilaian Kandidat</CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowScoring(!showScoring)}
+                >
+                  {showScoring ? 'Tutup' : 'Buka'}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {showScoring ? (
+                <div className="space-y-4">
+                  {scoringCriteria.map((criteria) => (
+                    <div key={criteria.id} className="border-b border-gray-100 pb-3 last:border-0">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">{criteria.label}</p>
+                          <p className="text-xs text-gray-500">{criteria.description}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            onClick={() => saveScore(criteria.id, star)}
+                            className="p-0.5 hover:scale-110 transition-transform"
+                          >
+                            {star <= (scores[criteria.id] || 0) ? (
+                              <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                            ) : (
+                              <StarOff className="w-5 h-5 text-gray-300" />
+                            )}
+                          </button>
+                        ))}
+                        <span className="ml-2 text-sm font-medium text-gray-600">
+                          {scores[criteria.id] || 0}/5
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="pt-3 border-t border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-gray-900">Rata-rata Skor:</span>
+                      <span className="text-lg font-bold text-primary-600">
+                        {getAverageScore()}/5
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-sm text-gray-500">
+                    {Object.keys(scores).length > 0 ? (
+                      <>Skor rata-rata: <span className="font-bold text-primary-600">{getAverageScore()}/5</span></>
+                    ) : (
+                      'Belum ada penilaian'
+                    )}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Actions */}
           <Card>
             <CardHeader>
               <CardTitle>Tindakan</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
+              {/* Schedule Interview Button */}
+              <Button
+                onClick={() => setShowInterviewSchedule(true)}
+                variant="default"
+                size="sm"
+                className="w-full bg-gradient-to-r from-primary-600 to-blue-600 hover:from-primary-700 hover:to-blue-700"
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                Jadwalkan Interview
+              </Button>
+              
               {/* Stage Management */}
               <div className="space-y-2">
                 <p className="text-sm font-medium text-gray-700">Ubah Status</p>
                 
-                {application.stage !== 'screening' && application.stage !== 'hired' && application.stage !== 'rejected' && (
+                {application.stage !== 'screening' && application.stage !== 'accepted' && application.stage !== 'rejected' && (
                   <Button
                     onClick={() => handleStageChange('screening')}
                     variant="outline"
@@ -346,7 +494,7 @@ const ApplicantDetail: React.FC = () => {
 
                 {application.stage === 'offer' && (
                   <Button
-                    onClick={() => handleStageChange('hired')}
+                    onClick={() => handleStageChange('accepted')}
                     className="w-full justify-start"
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
@@ -354,7 +502,7 @@ const ApplicantDetail: React.FC = () => {
                   </Button>
                 )}
 
-                {application.stage !== 'hired' && application.stage !== 'rejected' && (
+                {application.stage !== 'accepted' && application.stage !== 'rejected' && (
                   <Button
                     onClick={() => handleStageChange('rejected')}
                     variant="destructive"
@@ -400,6 +548,68 @@ const ApplicantDetail: React.FC = () => {
           </Card>
         </div>
       </div>
+      
+      {/* Interview Scheduling Modal */}
+      {showInterviewSchedule && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowInterviewSchedule(false)}>
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-primary-600" />
+              Jadwalkan Interview
+            </h2>
+            
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="text-sm font-medium mb-1 block">Tanggal</label>
+                <input
+                  type="date"
+                  value={interviewDate}
+                  onChange={(e) => setInterviewDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  min={new Date().toISOString().split('T')[0]}
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-1 block">Waktu</label>
+                <input
+                  type="time"
+                  value={interviewTime}
+                  onChange={(e) => setInterviewTime(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-1 block">Catatan (opsional)</label>
+                <textarea
+                  value={interviewNotes}
+                  onChange={(e) => setInterviewNotes(e.target.value)}
+                  placeholder="Lokasi, platform video call, atau instruksi lainnya..."
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none resize-none"
+                />
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <Button
+                onClick={() => setShowInterviewSchedule(false)}
+                variant="outline"
+                className="flex-1"
+              >
+                Batal
+              </Button>
+              <Button
+                onClick={scheduleInterview}
+                className="flex-1 bg-gradient-to-r from-primary-600 to-blue-600 hover:from-primary-700 hover:to-blue-700"
+              >
+                Jadwalkan
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

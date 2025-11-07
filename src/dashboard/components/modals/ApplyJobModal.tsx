@@ -38,7 +38,6 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({ isOpen, onClose, jobData,
     portfolio: '',
     agreeTerms: false
   });
-  const [coverLetterDraft, setCoverLetterDraft] = useState('');
   const [showTemplates, setShowTemplates] = useState(false);
   
   // Load saved draft from localStorage
@@ -47,7 +46,6 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({ isOpen, onClose, jobData,
       const savedDraft = localStorage.getItem(`cover_letter_draft_${jobData.id}`);
       if (savedDraft) {
         setFormData(prev => ({ ...prev, coverLetter: savedDraft }));
-        setCoverLetterDraft(savedDraft);
       }
     }
   }, [isOpen, jobData.id]);
@@ -76,7 +74,18 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({ isOpen, onClose, jobData,
   const handleSubmit = () => {
     setIsSubmitting(true);
     
-    // Create application object
+    // Load simulasi scores dari localStorage
+    const simulasiResults = JSON.parse(localStorage.getItem('simhire_simulasi_results') || '[]');
+    const userSimulasiScores: Record<string, number> = {};
+    
+    // Aggregate scores by category
+    simulasiResults.forEach((result: any) => {
+      if (result.score) {
+        userSimulasiScores[result.categoryId || result.title] = result.score;
+      }
+    });
+    
+    // Create application object with simulasi scores
     const application: Application = {
       id: crypto.randomUUID(),
       jobId: jobData.id || crypto.randomUUID(),
@@ -88,6 +97,7 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({ isOpen, onClose, jobData,
       appliedAt: new Date().toISOString(),
       status: 'applied',
       notes: formData.coverLetter,
+      simulasiScores: Object.keys(userSimulasiScores).length > 0 ? userSimulasiScores : undefined,
       timeline: [
         {
           date: new Date().toISOString(),

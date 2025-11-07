@@ -207,7 +207,8 @@ export function updateApplication(id: string, updates: Partial<Application>): bo
 export function updateApplicationStatus(
   id: string, 
   status: Application['status'],
-  timelineEntry?: string
+  timelineEntry?: string,
+  companyNote?: string
 ): boolean {
   const apps = loadApplications();
   const index = apps.findIndex(a => a.id === id);
@@ -216,16 +217,44 @@ export function updateApplicationStatus(
   
   apps[index].status = status;
   
-  if (timelineEntry) {
-    if (!apps[index].timeline) apps[index].timeline = [];
-    apps[index].timeline?.push({
-      date: new Date().toISOString(),
-      status,
-      description: timelineEntry,
-    });
+  // Add timeline entry
+  if (!apps[index].timeline) apps[index].timeline = [];
+  
+  const statusDescriptions: Record<Application['status'], string> = {
+    applied: 'Lamaran Anda telah diterima',
+    screening: 'Lamaran Anda sedang dalam tahap screening oleh HRD',
+    interview: 'Selamat! Anda diundang untuk interview',
+    offer: 'Selamat! Anda mendapat penawaran kerja',
+    accepted: 'Selamat! Anda diterima di posisi ini',
+    rejected: 'Mohon maaf, lamaran Anda belum berhasil kali ini'
+  };
+  
+  apps[index].timeline?.push({
+    date: new Date().toISOString(),
+    status,
+    description: timelineEntry || statusDescriptions[status],
+  });
+  
+  // Add company note if provided
+  if (companyNote) {
+    apps[index].notes = companyNote;
   }
   
   return safeSave(KEYS.APPLICATIONS, apps);
+}
+
+// Sync function untuk company-side status changes
+export function syncCompanyApplicationStatus(
+  applicationId: string,
+  newStatus: Application['status'],
+  note?: string
+): boolean {
+  const apps = loadApplications();
+  const app = apps.find(a => a.id === applicationId);
+  
+  if (!app) return false;
+  
+  return updateApplicationStatus(app.id, newStatus, undefined, note);
 }
 
 export function deleteApplication(id: string): boolean {

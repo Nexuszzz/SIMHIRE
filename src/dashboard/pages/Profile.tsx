@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { getTopProjects, PortfolioProject } from '@/lib/portfolio';
 import { loadSimulasiResults } from '@/lib/storage';
 import { useUser } from '../../context/UserContext';
-import { Pencil, Save, User, Mail, Key, ShieldCheck, X, CheckCircle2, Award, Briefcase, MapPin, Globe, Github, Linkedin, Trophy, Star } from 'lucide-react';
+import { Pencil, Save, User, Mail, Key, ShieldCheck, X, CheckCircle2, Award, Briefcase, MapPin, Globe, Github, Linkedin, Trophy, Star, Palette, Upload, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Profile: React.FC = () => {
@@ -13,6 +13,8 @@ const Profile: React.FC = () => {
   const [emailForm, setEmailForm] = useState({ email: user?.email || '', passwordConfirm: '' });
   const [pwdForm, setPwdForm] = useState({ current: '', next: '', confirm: '' });
   const [feedback, setFeedback] = useState<{type:'success'|'error'; msg:string}|null>(null);
+  const [resumeFile, setResumeFile] = useState<string | null>(null);
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const [local, setLocal] = useState({
     name: user?.name || '',
     headline: user?.headline || '',
@@ -58,6 +60,53 @@ const Profile: React.FC = () => {
     });
     setIsEditing(false);
     pushFeedback('success','Profil berhasil diperbarui');
+  };
+  
+  // Handle resume upload
+  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.size > 5 * 1024 * 1024) {
+      pushFeedback('error', 'Ukuran file maksimal 5MB');
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setResumeFile(base64);
+      localStorage.setItem('simhire_user_resume', base64);
+      localStorage.setItem('simhire_user_resume_name', file.name);
+      pushFeedback('success', `Resume "${file.name}" berhasil diupload`);
+    };
+    reader.readAsDataURL(file);
+  };
+  
+  // Load saved resume
+  useEffect(() => {
+    const savedResume = localStorage.getItem('simhire_user_resume');
+    if (savedResume) {
+      setResumeFile(savedResume);
+    }
+  }, []);
+  
+  // Avatar color picker
+  const avatarColors = [
+    'bg-gradient-to-br from-blue-500 to-cyan-600',
+    'bg-gradient-to-br from-purple-500 to-pink-600',
+    'bg-gradient-to-br from-green-500 to-emerald-600',
+    'bg-gradient-to-br from-orange-500 to-red-600',
+    'bg-gradient-to-br from-indigo-500 to-purple-600',
+    'bg-gradient-to-br from-pink-500 to-rose-600',
+    'bg-gradient-to-br from-teal-500 to-cyan-600',
+    'bg-gradient-to-br from-yellow-500 to-orange-600',
+  ];
+  
+  const changeAvatarColor = (color: string) => {
+    updateProfile({ avatarColor: color });
+    setShowAvatarPicker(false);
+    pushFeedback('success', 'Warna avatar diperbarui');
   };
 
   useEffect(()=>{
@@ -133,10 +182,46 @@ const Profile: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-primary-400 to-purple-500 rounded-xl sm:rounded-2xl blur-xl opacity-50"></div>
               <motion.div 
                 whileHover={{ scale: 1.05 }}
-                className={`relative w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-xl sm:rounded-2xl ${user.avatarColor||'bg-gradient-to-br from-primary-500 to-blue-600'} flex items-center justify-center text-white text-4xl sm:text-5xl font-bold shadow-2xl border-4 border-white`}
+                onClick={() => !isEditing && setShowAvatarPicker(true)}
+                className={`relative w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-xl sm:rounded-2xl ${user.avatarColor||'bg-gradient-to-br from-primary-500 to-blue-600'} flex items-center justify-center text-white text-4xl sm:text-5xl font-bold shadow-2xl border-4 border-white cursor-pointer group`}
               >
                 {user.name.charAt(0)}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 rounded-xl transition-colors flex items-center justify-center">
+                  <Palette className="w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
               </motion.div>
+              
+              {/* Avatar Color Picker Modal */}
+              {showAvatarPicker && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowAvatarPicker(false)}>
+                  <motion.div 
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    onClick={(e) => e.stopPropagation()}
+                    className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl"
+                  >
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                      <Palette className="w-5 h-5" />
+                      Pilih Warna Avatar
+                    </h3>
+                    <div className="grid grid-cols-4 gap-3 mb-4">
+                      {avatarColors.map((color, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => changeAvatarColor(color)}
+                          className={`w-full aspect-square rounded-xl ${color} hover:scale-110 transition-transform shadow-lg hover:shadow-xl border-2 ${user.avatarColor === color ? 'border-gray-900' : 'border-white'}`}
+                        />
+                      ))}
+                    </div>
+                    <button 
+                      onClick={() => setShowAvatarPicker(false)}
+                      className="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      Tutup
+                    </button>
+                  </motion.div>
+                </div>
+              )}
             </div>
 
             {/* User Info */}
@@ -295,6 +380,51 @@ const Profile: React.FC = () => {
               <label className="block text-sm font-medium mb-1">Dribbble</label>
               <Input value={local.dribbble} onChange={e=>setLocal({...local, dribbble:e.target.value})} />
             </div>
+            
+            {/* Resume Upload */}
+            <div className="md:col-span-3 border-t border-gray-200 pt-6">
+              <label className="text-sm font-medium mb-3 flex items-center gap-2">
+                <FileText className="w-4 h-4" />
+                Upload Resume/CV
+              </label>
+              <div className="flex items-center gap-4">
+                <input 
+                  type="file"
+                  id="resume-upload"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleResumeUpload}
+                  className="hidden"
+                />
+                <label 
+                  htmlFor="resume-upload"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-500 to-blue-600 hover:from-primary-600 hover:to-blue-700 text-white rounded-lg cursor-pointer transition-all shadow-md hover:shadow-lg text-sm font-medium"
+                >
+                  <Upload className="w-4 h-4" />
+                  {resumeFile ? 'Ganti Resume' : 'Upload Resume'}
+                </label>
+                {resumeFile && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 text-green-800 rounded-lg">
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>{localStorage.getItem('simhire_user_resume_name') || 'resume.pdf'}</span>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        setResumeFile(null);
+                        localStorage.removeItem('simhire_user_resume');
+                        localStorage.removeItem('simhire_user_resume_name');
+                        pushFeedback('success', 'Resume dihapus');
+                      }}
+                      className="text-red-600 hover:text-red-700 p-1"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 mt-2">Format: PDF, DOC, DOCX (Maksimal 5MB)</p>
+            </div>
+            
             <div className="md:col-span-3 flex justify-end gap-2">
               <button onClick={()=> setIsEditing(false)} className="px-5 py-2.5 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">Batal</button>
               <button onClick={onSave} className="px-5 py-2.5 rounded-lg bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition shadow">Simpan</button>
