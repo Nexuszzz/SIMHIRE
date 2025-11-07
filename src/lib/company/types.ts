@@ -1,11 +1,11 @@
 // Company Dashboard Types & Interfaces
-export type UserRole = 'candidate' | 'company' | 'admin';
-export type JobStatus = 'draft' | 'open' | 'paused' | 'closed';
-export type EmploymentType = 'full-time' | 'part-time' | 'contract' | 'internship';
-export type ExperienceLevel = 'entry' | 'mid' | 'senior';
-export type LocationMode = 'remote' | 'hybrid' | 'on-site';
-export type ApplicationStage = 'applied' | 'screening' | 'interview' | 'offer' | 'hired' | 'rejected';
+import type { SalaryRange, EmploymentType, ExperienceLevel, LocationMode, ApplicationStatus, JobStatus, UserRole, Currency, CompanySize, HiringStatus } from '../types';
+
+export type ApplicationStage = ApplicationStatus; // Alias for compatibility
 export type ContractStatus = 'draft' | 'awaiting_funding' | 'funded' | 'in_progress' | 'submitted' | 'released' | 'cancelled' | 'disputed' | 'resolved' | 'active' | 'pending' | 'completed';
+
+// Re-export for convenience
+export type { SalaryRange, EmploymentType, ExperienceLevel, LocationMode, ApplicationStatus, JobStatus, UserRole, Currency, CompanySize, HiringStatus };
 
 // Company Profile
 export interface CompanyProfile {
@@ -14,7 +14,7 @@ export interface CompanyProfile {
   name: string;
   logoUrl?: string;
   industry: string;
-  size: '1-10' | '11-50' | '51-200' | '201-500' | '501-1000' | '1000+';
+  size: CompanySize;
   location: string;
   description: string;
   website?: string;
@@ -25,7 +25,7 @@ export interface CompanyProfile {
     twitter?: string;
     facebook?: string;
   };
-  hiringStatus: 'active' | 'not_hiring' | 'paused';
+  hiringStatus: HiringStatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -40,14 +40,10 @@ export interface JobPost {
   experienceLevel: ExperienceLevel;
   locationMode: LocationMode;
   location: string;
-  salaryMin?: number;
-  salaryMax?: number;
-  currency: 'IDR' | 'USD';
-  salaryRange?: {
-    min?: number;
-    max?: number;
-    currency: 'IDR' | 'USD';
-  };
+  salaryMin?: number; // Deprecated: use salaryRange
+  salaryMax?: number; // Deprecated: use salaryRange
+  currency: Currency;
+  salaryRange?: SalaryRange;
   description: string;
   requirements: string[];
   benefits?: string[];
@@ -75,7 +71,7 @@ export interface JobApplication {
   coverLetter?: string;
   resumeUrl?: string;
   portfolioUrl?: string;
-  stage: ApplicationStage;
+  stage: ApplicationStatus;
   scoreOverall?: number; // 1-10
   reviewerNotes: string[];
   appliedAt: string;

@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Star, Quote } from 'lucide-react';
 
 const Testimonials = () => {
+  const navigate = useNavigate();
   const [visibleCards, setVisibleCards] = useState<number[]>([]);
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -137,11 +139,23 @@ const Testimonials = () => {
         
         {/* Call to Action */}
         <div className="text-center mt-16">
-          <div className="inline-flex items-center space-x-4">
-            <button className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-500 transform hover:scale-105 hover:shadow-2xl shadow-emerald-500/25">
+          <div className="inline-flex flex-col sm:flex-row items-center gap-4">
+            <button 
+              onClick={() => navigate('/register')}
+              className="tap-target w-full sm:w-auto bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold transition-all duration-500 transform hover:scale-105 hover:shadow-2xl shadow-emerald-500/25"
+            >
               Bergabung Sekarang
             </button>
-            <button className="border-2 border-gray-300 hover:border-emerald-500 text-gray-700 hover:text-emerald-600 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-500 transform hover:scale-105">
+            <button 
+              onClick={() => {
+                // Scroll to testimonials section (already here) or show more
+                const testimonialsElement = sectionRef.current;
+                if (testimonialsElement) {
+                  testimonialsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
+              className="tap-target w-full sm:w-auto border-2 border-gray-300 hover:border-emerald-500 text-gray-700 hover:text-emerald-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold transition-all duration-500 transform hover:scale-105"
+            >
               Lihat Semua Testimoni
             </button>
           </div>

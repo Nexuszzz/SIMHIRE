@@ -1,0 +1,20 @@
+{
+  "servers": {
+    "ssh-vps": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "ssh-mcp",
+        "-y",
+        "--",
+        "--host=13.213.57.228",
+        "--user=ubuntu",
+        "--key=C:/Users/fahri/Downloads/vpsdeploy"
+      ]
+    },
+    "browsermcp": {
+      "command": "npx",
+      "args": ["-y", "@browsermcp/mcp@latest"]
+    }
+  }
+}

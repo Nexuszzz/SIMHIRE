@@ -40,8 +40,19 @@ export default {
       },
       spacing: {
         'section': '5rem',
+        'section-mobile': '3rem',
         'container': '1.5rem',
-      }
+        'container-mobile': '1rem',
+      },
+      // Responsive breakpoints
+      screens: {
+        'xs': '475px',
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
+      },
     },
   },
   plugins: [],

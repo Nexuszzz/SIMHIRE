@@ -210,7 +210,7 @@ const Login = () => {
               <img alt="Google" src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" className="w-5 h-5" />
               <span>Google</span>
             </motion.button>
-            <motion.button onClick={() => socialLogin('linkedin')} disabled={loading} whileTap={{ scale: 0.98 }} whileHover={{ y: -1 }} className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#0A66C2] text-white hover:bg-[#094f96] transition-all">
+            <motion.button onClick={() => socialLogin('linkedin')} disabled={loading} whileTap={{ scale: 0.98 }} whileHover={{ y: -1 }} className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-all">
               <Linkedin className="w-5 h-5" />
               <span>LinkedIn</span>
             </motion.button>

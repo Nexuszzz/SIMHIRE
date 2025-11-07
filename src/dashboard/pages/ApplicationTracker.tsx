@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { Clock, CheckCircle, XCircle, AlertCircle, Calendar, Building2, FileText, TrendingUp, Bookmark } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, AlertCircle, Calendar, Building2, FileText, TrendingUp } from 'lucide-react';
 import { StatsCard } from '../components/StatsCard';
 import { ProgressChart } from '../components/ProgressChart';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import ViewApplicationModal from '../components/modals/ViewApplicationModal';
-import { loadApplications, loadSavedJobs, updateApplicationStatus, type Application as StoredApplication, type SavedJob } from '@/lib/storage';
+import { loadApplications, type Application as StoredApplication } from '@/lib/storage';
 import { toast } from 'sonner';
 
 interface Application {
@@ -123,36 +123,43 @@ const ApplicationTracker: React.FC = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
   const [applications, setApplications] = useState<Application[]>([]);
-  const [savedJobs, setSavedJobs] = useState<SavedJob[]>([]);
-  const [activeTab, setActiveTab] = useState<'applications' | 'saved'>('applications');
 
   // Load data from localStorage
   useEffect(() => {
     loadData();
+    
+    // Add event listener for storage changes (real-time sync across tabs)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'simhire_v1_candidate_applications' || e.key === 'simhire_v1_candidate_saved_jobs') {
+        loadData();
+        toast.info('Data updated', { description: 'Application status synchronized' });
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Refresh data when window regains focus
+    const handleFocus = () => {
+      loadData();
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   const loadData = () => {
     const storedApps = loadApplications();
     const convertedApps = storedApps.map(convertApplication);
     setApplications(convertedApps);
-
-    const storedSaved = loadSavedJobs();
-    setSavedJobs(storedSaved);
   };
 
   const handleViewDetails = (application: Application) => {
     setSelectedApplication(application);
     setShowDetailModal(true);
-  };
-
-  const handleUpdateStatus = (appId: string, newStatus: StoredApplication['status']) => {
-    const success = updateApplicationStatus(appId, newStatus);
-    if (success) {
-      loadData(); // Reload data
-      toast.success('Status updated successfully');
-    } else {
-      toast.error('Failed to update status');
-    }
   };
 
   // Calculate stats from actual data
@@ -211,35 +218,35 @@ const ApplicationTracker: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Header */}
+      <div className="max-w-7xl mx-auto mobile-container mobile-section space-y-6 sm:space-y-8">
+        {/* Header - Mobile optimized */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Application Tracker</h1>
-          <p className="text-gray-600">Track your internship application progress</p>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">Application Tracker</h1>
+          <p className="text-sm sm:text-base text-gray-600">Track your internship application progress</p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Stats Cards - Responsive grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {stats.map((stat, index) => (
             <StatsCard key={stat.label} {...stat} index={index} />
           ))}
         </div>
 
-        {/* Activity Chart */}
-        <div className="bg-white rounded-xl p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        {/* Activity Chart - Mobile optimized */}
+        <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 border border-gray-200">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
             Aktivitas Lamaran (6 Bulan Terakhir)
           </h3>
           <ProgressChart data={activityData} />
         </div>
 
-        {/* Applications List */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">
+        {/* Applications List - Mobile optimized */}
+        <div className="space-y-3 sm:space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-4 mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
               {applications.length} Lamaran Aktif
             </h2>
-            <span className="px-3 py-1 bg-primary-100 text-primary-600 text-xs font-medium rounded-full">
+            <span className="px-2 sm:px-3 py-1 bg-primary-100 text-primary-600 text-xs font-medium rounded-full">
               Tracked
             </span>
           </div>
@@ -250,50 +257,51 @@ const ApplicationTracker: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-xl hover:border-primary-300 transition-all group"
+              className="bg-white border border-gray-200 rounded-lg sm:rounded-xl p-4 sm:p-5 hover:shadow-xl hover:border-primary-300 transition-all group"
             >
-              {/* Header with Logo */}
-              <div className="flex items-start gap-3 mb-4">
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0 group-hover:scale-105 transition-transform shadow-md">
+              {/* Header with Logo - Mobile optimized */}
+              <div className="flex items-start gap-2 sm:gap-3 mb-3 sm:mb-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-lg sm:text-xl font-bold flex-shrink-0 group-hover:scale-105 transition-transform shadow-md">
                   {application.company.name.charAt(0)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-base font-semibold text-gray-900 group-hover:text-primary-600 transition-colors line-clamp-1">
+                  <div className="flex flex-col xs:flex-row items-start xs:justify-between gap-2">
+                    <div className="flex-1 min-w-0 w-full">
+                      <h3 className="text-sm sm:text-base font-semibold text-gray-900 group-hover:text-primary-600 transition-colors line-clamp-2 xs:line-clamp-1">
                         {application.position}
                       </h3>
-                      <p className="text-sm text-gray-600 font-medium line-clamp-1">{application.company.name}</p>
+                      <p className="text-xs sm:text-sm text-gray-600 font-medium line-clamp-1">{application.company.name}</p>
                     </div>
-                    <Badge className={`${getStatusColor(application.status)} border text-xs flex-shrink-0`}>
+                    <Badge className={`${getStatusColor(application.status)} border text-xs flex-shrink-0 self-start xs:self-center`}>
                       <span className="flex items-center gap-1">
                         {getStatusIcon(application.status)}
-                        {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                        <span className="hidden xs:inline">{application.status.charAt(0).toUpperCase() + application.status.slice(1)}</span>
+                        <span className="xs:hidden">{application.status.charAt(0).toUpperCase() + application.status.slice(1, 3)}</span>
                       </span>
                     </Badge>
                   </div>
                 </div>
               </div>
 
-              {/* Progress Bar */}
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-2">
+              {/* Progress Bar - Mobile optimized */}
+              <div className="mb-3 sm:mb-4">
+                <div className="flex items-center justify-between mb-1.5 sm:mb-2">
                   <span className="text-xs text-gray-500">Progress</span>
                   <span className="text-xs font-semibold text-gray-900">{application.progress}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-1.5 sm:h-2">
                   <div 
-                    className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(application.status)}`}
+                    className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 ${getProgressColor(application.status)}`}
                     style={{ width: `${application.progress}%` }}
                   ></div>
                 </div>
               </div>
 
-              {/* Info Grid */}
-              <div className="grid grid-cols-3 gap-3 mb-4 py-3 border-y border-gray-100">
+              {/* Info Grid - Mobile optimized */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-3 sm:mb-4 py-2 sm:py-3 border-y border-gray-100">
                 <div className="text-center">
-                  <div className="flex items-center justify-center mb-1">
-                    <Calendar className="w-4 h-4 text-blue-600" />
+                  <div className="flex items-center justify-center mb-0.5 sm:mb-1">
+                    <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" />
                   </div>
                   <p className="text-xs text-gray-500 mb-0.5">Applied</p>
                   <p className="text-xs font-semibold text-gray-900">
@@ -301,11 +309,11 @@ const ApplicationTracker: React.FC = () => {
                   </p>
                 </div>
                 <div className="text-center border-x border-gray-100">
-                  <div className="flex items-center justify-center mb-1">
+                  <div className="flex items-center justify-center mb-0.5 sm:mb-1">
                     {application.interviewDate ? (
-                      <Clock className="w-4 h-4 text-orange-600" />
+                      <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-orange-600" />
                     ) : (
-                      <AlertCircle className="w-4 h-4 text-gray-400" />
+                      <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
                     )}
                   </div>
                   <p className="text-xs text-gray-500 mb-0.5">Interview</p>
@@ -317,8 +325,8 @@ const ApplicationTracker: React.FC = () => {
                   </p>
                 </div>
                 <div className="text-center">
-                  <div className="flex items-center justify-center mb-1">
-                    <FileText className="w-4 h-4 text-purple-600" />
+                  <div className="flex items-center justify-center mb-0.5 sm:mb-1">
+                    <FileText className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600" />
                   </div>
                   <p className="text-xs text-gray-500 mb-0.5">Next Step</p>
                   <p className="text-xs font-semibold text-gray-900 line-clamp-1">
@@ -327,11 +335,11 @@ const ApplicationTracker: React.FC = () => {
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center gap-2">
+              {/* Actions - Mobile optimized */}
+              <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2">
                 {application.status === 'interview' && (
                   <button
-                    className="px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white rounded-lg text-sm font-medium transition-all hover:shadow-lg flex-shrink-0"
+                    className="tap-target px-3 sm:px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white rounded-lg text-xs sm:text-sm font-medium transition-all hover:shadow-lg flex-shrink-0"
                   >
                     Prepare Interview
                   </button>
@@ -339,7 +347,7 @@ const ApplicationTracker: React.FC = () => {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="flex-1"
+                  className="tap-target flex-1 text-xs sm:text-sm"
                   onClick={() => handleViewDetails(application)}
                 >
                   View Details
@@ -372,7 +380,7 @@ const ApplicationTracker: React.FC = () => {
           setShowDetailModal(false);
           setSelectedApplication(null);
         }}
-        application={selectedApplication}
+        application={selectedApplication as any} // Type conversion for modal compatibility
       />
     </div>
   );

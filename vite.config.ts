@@ -25,14 +25,8 @@ export default defineConfig({
     exclude: ['lucide-react'],
   },
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-ui': ['framer-motion', 'lucide-react'],
-        },
-      },
-    },
+    target: 'es2015',
+    minify: 'esbuild',
     chunkSizeWarningLimit: 1000,
     sourcemap: false,
   },

@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Toaster } from 'sonner';
 import { prefetchNextRoute } from './utils/prefetch';
+import ErrorBoundary from './components/ErrorBoundary';
 
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -141,51 +142,95 @@ function App() {
   useScrollToTop();
   const location = useLocation();
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <Suspense fallback={<PageLoader />}>
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<Page><HomePage /></Page>} />
-          <Route path="/login" element={<AuthPage direction="left"><Login /></AuthPage>} />
-          <Route path="/register" element={<AuthPage direction="left"><Register /></AuthPage>} />
-          <Route path="/auth/:provider" element={<AuthPage direction="left"><OAuthMock /></AuthPage>} />
-          <Route path="/auth/callback" element={<AuthPage direction="left"><OAuthCallback /></AuthPage>} />
-          <Route path="/dashboard" element={<Page direction="right"><DashboardLayout /></Page>}>
-            <Route index element={<DashboardOverview />} />
-            <Route path="jobs" element={<DashboardJobsHome />} />
-            <Route path="job-finder" element={<JobFinder />} />
-            <Route path="job-simulation" element={<JobSimulation />} />
-            <Route path="simulasi-kerja" element={<SimulasiKerja />} />
-            <Route path="simulasi-kerja/leaderboard" element={<SimulasiLeaderboard />} />
-            <Route path="simulasi-kerja/:categoryId" element={<SimulasiDetail />} />
-            <Route path="simulasi-kerja/:categoryId/execute" element={<SimulasiExecution />} />
-            <Route path="simulasi-kerja/:categoryId/results" element={<SimulasiResults />} />
-            <Route path="apprenticeship-tracker" element={<ApprenticeshipTracker />} />
-            <Route path="application-tracker" element={<ApplicationTracker />} />
-            <Route path="auto-cv" element={<AutoCV />} />
-            <Route path="portfolio" element={<Portfolio />} />
-            <Route path="skill-snapshot" element={<FeaturePlaceholder title="Ringkasan Skill" />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
-          <Route path="/company" element={<Page direction="right"><CompanyLayout /></Page>}>
-            <Route index element={<CompanyOverview />} />
-            <Route path="jobs" element={<CompanyJobs />} />
-            <Route path="jobs/new" element={<CreateJobForm />} />
-            <Route path="jobs/:jobId/edit" element={<EditJobForm />} />
-            <Route path="jobs/:jobId/applicants" element={<JobApplicants />} />
-            <Route path="simulasi" element={<CompanySimulasi />} />
-            <Route path="applicants" element={<CompanyApplicants />} />
-            <Route path="applicants/:applicationId" element={<ApplicantDetail />} />
-            <Route path="talent" element={<TalentSearch />} />
-            <Route path="evaluation-templates" element={<EvaluationTemplates />} />
-            <Route path="team" element={<TeamManagement />} />
-            <Route path="activity" element={<CompanyActivity />} />
-            <Route path="settings" element={<CompanySettings />} />
-          </Route>
-        </Routes>
-      </Suspense>
-      <Toaster richColors position="top-right" />
-    </AnimatePresence>
+    <ErrorBoundary>
+      <AnimatePresence mode="wait" initial={false}>
+        <Suspense fallback={<PageLoader />}>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<Page><HomePage /></Page>} />
+            <Route path="/login" element={<AuthPage direction="left"><Login /></AuthPage>} />
+            <Route path="/register" element={<AuthPage direction="left"><Register /></AuthPage>} />
+            <Route path="/auth/:provider" element={<AuthPage direction="left"><OAuthMock /></AuthPage>} />
+            <Route path="/auth/callback" element={<AuthPage direction="left"><OAuthCallback /></AuthPage>} />
+            
+            {/* Candidate Dashboard Routes - Wrapped in ErrorBoundary */}
+            <Route path="/dashboard" element={
+              <Page direction="right">
+                <ErrorBoundary fallback={
+                  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                    <div className="text-center space-y-4 max-w-md p-8">
+                      <h2 className="text-2xl font-bold text-gray-900">Dashboard Error</h2>
+                      <p className="text-gray-600">Terjadi kesalahan pada dashboard. Silakan refresh halaman.</p>
+                      <button
+                        onClick={() => window.location.reload()}
+                        className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                      >
+                        Refresh Halaman
+                      </button>
+                    </div>
+                  </div>
+                }>
+                  <DashboardLayout />
+                </ErrorBoundary>
+              </Page>
+            }>
+              <Route index element={<DashboardOverview />} />
+              <Route path="jobs" element={<DashboardJobsHome />} />
+              <Route path="job-finder" element={<JobFinder />} />
+              <Route path="job-simulation" element={<JobSimulation />} />
+              <Route path="simulasi-kerja" element={<SimulasiKerja />} />
+              <Route path="simulasi-kerja/leaderboard" element={<SimulasiLeaderboard />} />
+              <Route path="simulasi-kerja/:categoryId" element={<SimulasiDetail />} />
+              <Route path="simulasi-kerja/:categoryId/execute" element={<SimulasiExecution />} />
+              <Route path="simulasi-kerja/:categoryId/results" element={<SimulasiResults />} />
+              <Route path="apprenticeship-tracker" element={<ApprenticeshipTracker />} />
+              <Route path="application-tracker" element={<ApplicationTracker />} />
+              <Route path="auto-cv" element={<AutoCV />} />
+              <Route path="portfolio" element={<Portfolio />} />
+              <Route path="skill-snapshot" element={<FeaturePlaceholder title="Ringkasan Skill" />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+            
+            {/* Company Dashboard Routes - Wrapped in ErrorBoundary */}
+            <Route path="/company" element={
+              <Page direction="right">
+                <ErrorBoundary fallback={
+                  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                    <div className="text-center space-y-4 max-w-md p-8">
+                      <h2 className="text-2xl font-bold text-gray-900">Company Dashboard Error</h2>
+                      <p className="text-gray-600">Terjadi kesalahan pada dashboard perusahaan. Silakan refresh halaman.</p>
+                      <button
+                        onClick={() => window.location.reload()}
+                        className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                      >
+                        Refresh Halaman
+                      </button>
+                    </div>
+                  </div>
+                }>
+                  <CompanyLayout />
+                </ErrorBoundary>
+              </Page>
+            }>
+              <Route index element={<CompanyOverview />} />
+              <Route path="jobs" element={<CompanyJobs />} />
+              <Route path="jobs/new" element={<CreateJobForm />} />
+              <Route path="jobs/:jobId/edit" element={<EditJobForm />} />
+              <Route path="jobs/:jobId/applicants" element={<JobApplicants />} />
+              <Route path="simulasi" element={<CompanySimulasi />} />
+              <Route path="applicants" element={<CompanyApplicants />} />
+              <Route path="applicants/:applicationId" element={<ApplicantDetail />} />
+              <Route path="talent" element={<TalentSearch />} />
+              <Route path="evaluation-templates" element={<EvaluationTemplates />} />
+              <Route path="team" element={<TeamManagement />} />
+              <Route path="activity" element={<CompanyActivity />} />
+              <Route path="settings" element={<CompanySettings />} />
+            </Route>
+          </Routes>
+        </Suspense>
+        <Toaster richColors position="top-right" />
+      </AnimatePresence>
+    </ErrorBoundary>
   );
 }
 

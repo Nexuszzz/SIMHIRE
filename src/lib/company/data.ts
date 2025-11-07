@@ -14,18 +14,19 @@ import {
 } from './types';
 import { MOCK_COMPANY_DATA } from './mockData';
 import { handleError } from '../errors';
+import { STORAGE_KEYS as GLOBAL_STORAGE_KEYS } from '../constants';
 
 // LocalStorage keys for company data
 const STORAGE_KEYS = {
-  COMPANY_PROFILE: 'company_profile',
-  COMPANY_JOBS: 'company_jobs',
-  COMPANY_APPLICATIONS: 'company_applications',
-  COMPANY_EVALUATION_TEMPLATES: 'company_evaluation_templates',
-  COMPANY_TALENT_POOLS: 'company_talent_pools',
-  COMPANY_TEAM_MEMBERS: 'company_team_members',
-  COMPANY_CONTRACTS: 'company_contracts',
-  COMPANY_ACTIVITIES: 'company_activities',
-  COMPANY_CANDIDATES: 'company_candidates'
+  COMPANY_PROFILE: GLOBAL_STORAGE_KEYS.COMPANY_PROFILE,
+  COMPANY_JOBS: GLOBAL_STORAGE_KEYS.COMPANY_JOBS,
+  COMPANY_APPLICATIONS: GLOBAL_STORAGE_KEYS.COMPANY_APPLICATIONS,
+  COMPANY_EVALUATION_TEMPLATES: `${GLOBAL_STORAGE_KEYS.COMPANY_PROFILE}_evaluation_templates`,
+  COMPANY_TALENT_POOLS: `${GLOBAL_STORAGE_KEYS.COMPANY_PROFILE}_talent_pools`,
+  COMPANY_TEAM_MEMBERS: GLOBAL_STORAGE_KEYS.COMPANY_TEAM,
+  COMPANY_CONTRACTS: `${GLOBAL_STORAGE_KEYS.COMPANY_PROFILE}_contracts`,
+  COMPANY_ACTIVITIES: `${GLOBAL_STORAGE_KEYS.COMPANY_PROFILE}_activities`,
+  COMPANY_CANDIDATES: `${GLOBAL_STORAGE_KEYS.COMPANY_PROFILE}_candidates`
 } as const;
 
 // Generic localStorage utility functions
@@ -86,6 +87,9 @@ export function getJobPost(jobId: string): JobPost | undefined {
   const jobs = getJobPosts();
   return jobs.find(job => job.id === jobId);
 }
+
+// Alias for compatibility
+export const getJobPostById = getJobPost;
 
 export function createJobPost(jobData: Omit<JobPost, 'id' | 'companyId' | 'createdAt' | 'applicationCount' | 'viewCount'>): JobPost {
   const jobs = getJobPosts();
@@ -352,8 +356,8 @@ export function getCompanyMetrics(): CompanyMetrics {
     new Date(app.appliedAt) >= oneWeekAgo
   ).length;
 
-  // Calculate average time to hire (simplified - from applied to hired)
-  const hiredApplications = applications.filter(app => app.stage === 'hired');
+  // Calculate average time to hire (simplified - from applied to accepted)
+  const hiredApplications = applications.filter(app => app.stage === 'accepted');
   const avgTimeToHire = hiredApplications.length > 0 
     ? hiredApplications.reduce((sum, app) => {
         const appliedDate = new Date(app.appliedAt);

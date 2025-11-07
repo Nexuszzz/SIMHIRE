@@ -1,15 +1,13 @@
+import type { SalaryRange, EmploymentType, ExperienceLevel } from './types';
+
 export interface Job {
   id: string;
   title: string;
   company: string;
   location: string;
-  type: 'full-time' | 'part-time' | 'contract' | 'internship';
-  experienceLevel: 'entry' | 'mid' | 'senior';
-  salary: {
-    min: number;
-    max: number;
-    currency: 'IDR' | 'USD';
-  };
+  type: EmploymentType;
+  experienceLevel: ExperienceLevel;
+  salary: SalaryRange;
   description: string;
   requirements: string[];
   skills: string[];

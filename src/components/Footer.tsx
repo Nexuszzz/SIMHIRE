@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer = () => {
+  const navigate = useNavigate();
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
 
   return (
@@ -21,13 +23,22 @@ const Footer = () => {
           <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
             Bergabung dengan ribuan kandidat yang telah berhasil mendapatkan pekerjaan melalui platform kami
           </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <button className="group bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 px-10 py-4 rounded-button font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-primary-500/25 flex items-center justify-center space-x-3 relative overflow-hidden">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
+            <button 
+              onClick={() => navigate('/register')}
+              className="tap-target group bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 px-8 sm:px-10 py-3 sm:py-4 rounded-button font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-primary-500/25 flex items-center justify-center space-x-3 relative overflow-hidden"
+            >
               <div className="pointer-events-none absolute inset-0 bg-white/15 opacity-0 -translate-x-[120%] group-hover:opacity-100 group-hover:translate-x-[120%] transition-all duration-400 ease-out will-change-transform"></div>
               <span>Mulai Sekarang</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
             </button>
-            <button className="group border-2 border-gray-600 text-gray-300 hover:border-primary-500 hover:text-primary-400 px-10 py-4 rounded-button font-semibold transition-all duration-300 transform hover:scale-105 relative overflow-hidden">
+            <button 
+              onClick={() => {
+                // Scroll to top or navigate to about page
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="tap-target group border-2 border-gray-600 text-gray-300 hover:border-primary-500 hover:text-primary-400 px-8 sm:px-10 py-3 sm:py-4 rounded-button font-semibold transition-all duration-300 transform hover:scale-105 relative overflow-hidden"
+            >
               <div className="pointer-events-none absolute inset-0 bg-primary-500/10 opacity-0 -translate-x-[120%] group-hover:opacity-100 group-hover:translate-x-[120%] transition-all duration-400 ease-out will-change-transform"></div>
               Pelajari Lebih Lanjut
             </button>
@@ -54,38 +65,100 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-6 text-primary-400">Platform</h3>
             <ul className="space-y-3 text-gray-400">
-              {['Untuk Kandidat', 'Untuk Perusahaan', 'Simulasi Gratis', 'Tryout Premium'].map((item) => (
-                <li key={item}>
-                  <a 
-                    href="#" 
-                    className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group"
-                    onMouseEnter={() => setHoveredLink(item)}
-                    onMouseLeave={() => setHoveredLink(null)}
-                  >
-                    {item}
-                    <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 transition-all duration-300 ${hoveredLink === item ? 'w-full' : ''}`}></span>
-                  </a>
-                </li>
-              ))}
+              <li>
+                <a 
+                  href="#candidate-features" 
+                  className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group"
+                  onMouseEnter={() => setHoveredLink('Untuk Kandidat')}
+                  onMouseLeave={() => setHoveredLink(null)}
+                >
+                  Untuk Kandidat
+                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 transition-all duration-300 ${hoveredLink === 'Untuk Kandidat' ? 'w-full' : ''}`}></span>
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="#company-features" 
+                  className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group"
+                  onMouseEnter={() => setHoveredLink('Untuk Perusahaan')}
+                  onMouseLeave={() => setHoveredLink(null)}
+                >
+                  Untuk Perusahaan
+                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 transition-all duration-300 ${hoveredLink === 'Untuk Perusahaan' ? 'w-full' : ''}`}></span>
+                </a>
+              </li>
+              <li>
+                <button 
+                  onClick={() => navigate('/dashboard/simulasi-kerja')}
+                  className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group text-left"
+                  onMouseEnter={() => setHoveredLink('Simulasi Gratis')}
+                  onMouseLeave={() => setHoveredLink(null)}
+                >
+                  Simulasi Gratis
+                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 transition-all duration-300 ${hoveredLink === 'Simulasi Gratis' ? 'w-full' : ''}`}></span>
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => navigate('/register')}
+                  className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group text-left"
+                  onMouseEnter={() => setHoveredLink('Tryout Premium')}
+                  onMouseLeave={() => setHoveredLink(null)}
+                >
+                  Tryout Premium
+                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 transition-all duration-300 ${hoveredLink === 'Tryout Premium' ? 'w-full' : ''}`}></span>
+                </button>
+              </li>
             </ul>
           </div>
           
           <div>
             <h3 className="text-lg font-semibold mb-6 text-emerald-400">Resources</h3>
             <ul className="space-y-3 text-gray-400">
-              {['Blog', 'Career Guide', 'Success Stories', 'FAQ'].map((item) => (
-                <li key={item}>
-                  <a 
-                    href="#" 
-                    className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group"
-                    onMouseEnter={() => setHoveredLink(item)}
-                    onMouseLeave={() => setHoveredLink(null)}
-                  >
-                    {item}
-                    <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 transition-all duration-300 ${hoveredLink === item ? 'w-full' : ''}`}></span>
-                  </a>
-                </li>
-              ))}
+              <li>
+                <button 
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group text-left"
+                  onMouseEnter={() => setHoveredLink('Blog')}
+                  onMouseLeave={() => setHoveredLink(null)}
+                >
+                  Blog
+                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 transition-all duration-300 ${hoveredLink === 'Blog' ? 'w-full' : ''}`}></span>
+                </button>
+              </li>
+              <li>
+                <a 
+                  href="#how-it-works"
+                  className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group"
+                  onMouseEnter={() => setHoveredLink('Career Guide')}
+                  onMouseLeave={() => setHoveredLink(null)}
+                >
+                  Career Guide
+                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 transition-all duration-300 ${hoveredLink === 'Career Guide' ? 'w-full' : ''}`}></span>
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="#testimonials"
+                  className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group"
+                  onMouseEnter={() => setHoveredLink('Success Stories')}
+                  onMouseLeave={() => setHoveredLink(null)}
+                >
+                  Success Stories
+                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 transition-all duration-300 ${hoveredLink === 'Success Stories' ? 'w-full' : ''}`}></span>
+                </a>
+              </li>
+              <li>
+                <button 
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  className="hover:text-emerald-400 transition-all duration-300 transform hover:translate-x-2 inline-block relative group text-left"
+                  onMouseEnter={() => setHoveredLink('FAQ')}
+                  onMouseLeave={() => setHoveredLink(null)}
+                >
+                  FAQ
+                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-emerald-400 transition-all duration-300 ${hoveredLink === 'FAQ' ? 'w-full' : ''}`}></span>
+                </button>
+              </li>
             </ul>
           </div>
           
@@ -113,16 +186,25 @@ const Footer = () => {
             <p className="text-gray-400">
               &copy; 2025 SimHire. All rights reserved.
             </p>
-            <div className="flex space-x-6 text-gray-400">
-              {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((item) => (
-                <a 
-                  key={item}
-                  href="#" 
-                  className="hover:text-emerald-400 transition-colors duration-300 text-sm"
-                >
-                  {item}
-                </a>
-              ))}
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-gray-400">
+              <button 
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="hover:text-emerald-400 transition-colors duration-300 text-sm"
+              >
+                Privacy Policy
+              </button>
+              <button 
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="hover:text-emerald-400 transition-colors duration-300 text-sm"
+              >
+                Terms of Service
+              </button>
+              <button 
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="hover:text-emerald-400 transition-colors duration-300 text-sm"
+              >
+                Cookie Policy
+              </button>
             </div>
           </div>
         </div>

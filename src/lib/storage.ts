@@ -2,6 +2,44 @@
 // Handles applications, saved jobs, interviews, simulasi results, etc.
 
 import { handleError } from './errors';
+import { STORAGE_KEYS } from './constants';
+import { toast } from 'sonner';
+import type { ApplicationStatus } from './types';
+import { z } from 'zod';
+import { validateData } from './validation';
+
+// ==================== VALIDATION SCHEMAS ====================
+
+const applicationSchema = z.object({
+  id: z.string(),
+  jobId: z.string(),
+  jobTitle: z.string().min(1),
+  company: z.string().min(1),
+  companyLogo: z.string().optional(),
+  location: z.string(),
+  salary: z.string().optional(),
+  appliedAt: z.string(),
+  status: z.enum(['applied', 'screening', 'interview', 'offer', 'rejected', 'accepted']),
+  notes: z.string().optional(),
+  timeline: z.array(z.object({
+    date: z.string(),
+    status: z.string(),
+    description: z.string(),
+  })).optional(),
+  simulasiScores: z.record(z.string(), z.number()).optional(), // NEW: Attach simulasi scores
+});
+
+const savedJobSchema = z.object({
+  id: z.string(),
+  jobId: z.string(),
+  jobTitle: z.string().min(1),
+  company: z.string().min(1),
+  companyLogo: z.string().optional(),
+  location: z.string(),
+  salary: z.string().optional(),
+  type: z.string(),
+  savedAt: z.string(),
+});
 
 // ==================== INTERFACES ====================
 
@@ -14,9 +52,10 @@ export interface Application {
   location: string;
   salary?: string;
   appliedAt: string;
-  status: 'applied' | 'screening' | 'interview' | 'offer' | 'rejected' | 'accepted';
+  status: ApplicationStatus;
   notes?: string;
   timeline?: ApplicationTimeline[];
+  simulasiScores?: Record<string, number>; // NEW: Simulasi scores { 'frontend': 85, 'backend': 90 }
 }
 
 export interface ApplicationTimeline {
@@ -90,11 +129,11 @@ export interface ApprenticeshipApplication {
 // ==================== STORAGE KEYS ====================
 
 const KEYS = {
-  APPLICATIONS: 'simhire_applications',
-  SAVED_JOBS: 'simhire_saved_jobs',
-  INTERVIEWS: 'simhire_interviews',
-  SIMULASI_RESULTS: 'simhire_simulasi_results',
-  APPRENTICESHIPS: 'simhire_apprenticeships',
+  APPLICATIONS: STORAGE_KEYS.CANDIDATE_APPLICATIONS,
+  SAVED_JOBS: STORAGE_KEYS.CANDIDATE_SAVED_JOBS,
+  INTERVIEWS: STORAGE_KEYS.CANDIDATE_INTERVIEWS,
+  SIMULASI_RESULTS: STORAGE_KEYS.CANDIDATE_SIMULASI,
+  APPRENTICESHIPS: STORAGE_KEYS.CANDIDATE_APPRENTICESHIPS,
 } as const;
 
 // ==================== HELPER FUNCTIONS ====================
@@ -126,9 +165,33 @@ export function loadApplications(): Application[] {
 }
 
 export function saveApplication(app: Application): boolean {
+  // VALIDATE data before saving
+  const validatedApp = validateData(applicationSchema, app);
+  if (!validatedApp) {
+    return false;
+  }
+  
   const apps = loadApplications();
-  apps.push(app);
-  return safeSave(KEYS.APPLICATIONS, apps);
+  
+  // CHECK FOR DUPLICATE - Prevent applying to same job twice
+  const exists = apps.some(a => a.jobId === validatedApp.jobId);
+  if (exists) {
+    toast.error('Anda sudah melamar pekerjaan ini', {
+      description: 'Lihat status lamaran Anda di halaman Application Tracker',
+    });
+    return false;
+  }
+  
+  apps.push(validatedApp);
+  const saved = safeSave(KEYS.APPLICATIONS, apps);
+  
+  if (saved) {
+    toast.success('Lamaran berhasil dikirim!', {
+      description: 'Perusahaan akan meninjau lamaran Anda',
+    });
+  }
+  
+  return saved;
 }
 
 export function updateApplication(id: string, updates: Partial<Application>): boolean {
@@ -185,15 +248,28 @@ export function loadSavedJobs(): SavedJob[] {
 }
 
 export function saveJob(job: SavedJob): boolean {
-  const jobs = loadSavedJobs();
-  
-  // Don't save duplicate
-  if (jobs.some(j => j.jobId === job.jobId)) {
+  // VALIDATE data before saving
+  const validatedJob = validateData(savedJobSchema, job);
+  if (!validatedJob) {
     return false;
   }
   
-  jobs.push(job);
-  return safeSave(KEYS.SAVED_JOBS, jobs);
+  const jobs = loadSavedJobs();
+  
+  // Don't save duplicate
+  if (jobs.some(j => j.jobId === validatedJob.jobId)) {
+    toast.error('Pekerjaan sudah disimpan sebelumnya');
+    return false;
+  }
+  
+  jobs.push(validatedJob);
+  const saved = safeSave(KEYS.SAVED_JOBS, jobs);
+  
+  if (saved) {
+    toast.success('Pekerjaan berhasil disimpan');
+  }
+  
+  return saved;
 }
 
 export function unsaveJob(jobId: string): boolean {

@@ -147,41 +147,41 @@ const CompanyJobs: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary-50/20 to-gray-50">
-    <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-      {/* Header - Enhanced */}
+    <div className="max-w-7xl mx-auto mobile-container mobile-section space-y-6 sm:space-y-8">
+      {/* Header - Enhanced & Mobile Optimized */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col md:flex-row md:items-center justify-between gap-4"
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl shadow-lg">
-              <Briefcase className="w-6 h-6 text-white" />
+          <div className="flex items-center gap-2 sm:gap-3 mb-2">
+            <div className="p-2 sm:p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg sm:rounded-xl shadow-lg">
+              <Briefcase className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
               Manajemen Lowongan
             </h1>
           </div>
-          <p className="text-gray-600 text-lg flex items-center gap-2">
-            <Target className="w-5 h-5" />
+          <p className="text-sm sm:text-base lg:text-lg text-gray-600 flex items-center gap-2">
+            <Target className="w-4 h-4 sm:w-5 sm:h-5" />
             Kelola lowongan kerja perusahaan Anda
           </p>
         </div>
-        <Link to="/company/jobs/new">
+        <Link to="/company/jobs/new" className="w-full sm:w-auto">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-medium shadow-xl hover:shadow-2xl transition-all"
+            className="tap-target w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-lg sm:rounded-xl bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white text-sm sm:text-base font-medium shadow-xl hover:shadow-2xl transition-all"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
             Buat Lowongan Baru
           </motion.button>
         </Link>
       </motion.div>
 
-      {/* Stats Cards - Using GradientCard */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Stats Cards - Using GradientCard - Mobile Optimized */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         <GradientCard
           title="Total Lowongan"
           value={totalJobs.toString()}
@@ -216,10 +216,10 @@ const CompanyJobs: React.FC = () => {
         />
       </div>
 
-      {/* Search & Filters */}
+      {/* Search & Filters - Mobile Optimized */}
       <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col lg:flex-row gap-4">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-col gap-3 sm:gap-4">
             {/* Search */}
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -228,7 +228,7 @@ const CompanyJobs: React.FC = () => {
                 placeholder="Cari lowongan..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-transparent"
+                className="w-full pl-9 pr-4 py-2 sm:py-2.5 border border-gray-200 rounded-lg text-sm sm:text-base focus:ring-2 focus:ring-accent-blue focus:border-transparent"
               />
             </div>
 
@@ -236,7 +236,7 @@ const CompanyJobs: React.FC = () => {
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className={showFilters ? 'bg-blue-50' : ''}
+              className={`tap-target w-full sm:w-auto ${showFilters ? 'bg-blue-50' : ''}`}
             >
               <Filter className="w-4 h-4 mr-2" />
               Filter
@@ -248,18 +248,19 @@ const CompanyJobs: React.FC = () => {
             </Button>
           </div>
 
-          {/* Filter Options */}
+          {/* Filter Options - Mobile Optimized */}
           {showFilters && (
-            <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200">
               <div className="space-y-3">
-                <h4 className="text-sm font-medium text-gray-900">Status Lowongan</h4>
-                <div className="flex flex-wrap gap-2">
+                <h4 className="text-xs sm:text-sm font-medium text-gray-900">Status Lowongan</h4>
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
                   {(['open', 'draft', 'paused', 'closed'] as JobStatus[]).map((status) => (
                     <Button
                       key={status}
                       variant={statusFilter.includes(status) ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => handleStatusFilterToggle(status)}
+                      className="tap-target text-xs sm:text-sm"
                     >
                       {getStatusLabel(status)}
                     </Button>

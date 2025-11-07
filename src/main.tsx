@@ -7,11 +7,14 @@ import { Toaster } from 'sonner';
 import ErrorBoundary from './components/ErrorBoundary';
 import { initializeSampleData } from './lib/portfolio';
 import { initializeSampleApplications } from './lib/storage';
+import { initializeCompanyData } from './lib/company/data';
 import './index.css';
 
-// Initialize sample data on first load
+// Initialize all sample data on first load (for demo purposes)
+// In production, this should be replaced with real database initialization
 initializeSampleData();
 initializeSampleApplications();
+initializeCompanyData(); // ADDED: Initialize company mock data
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
