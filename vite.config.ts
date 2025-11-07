@@ -8,13 +8,13 @@ export default defineConfig({
   base: '/',
   server: {
     host: '0.0.0.0', // Listen on all addresses including LAN
-    port: 5173,
+    port: 8347, // Custom port (less common than 5173)
     strictPort: true,
     cors: true,
     hmr: {
       protocol: 'ws',
       host: 'localhost',
-      clientPort: 5173,
+      clientPort: 8347,
       overlay: false,
     },
     watch: {
