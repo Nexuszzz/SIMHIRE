@@ -7,12 +7,18 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   server: {
-    host: true, // Listen on all addresses including LAN
+    host: '0.0.0.0', // Listen on all addresses including LAN
     port: 5173,
     strictPort: true,
     cors: true,
     hmr: {
+      protocol: 'ws',
+      host: 'localhost',
       clientPort: 5173,
+      overlay: false,
+    },
+    watch: {
+      usePolling: true,
     },
   },
   resolve: {
