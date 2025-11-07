@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Plus, X } from 'lucide-react';
+import { ArrowLeft, Save, Plus, X, Clock } from 'lucide-react';
 import { createJobPost } from '@/lib/company/data';
 import { EmploymentType, ExperienceLevel, LocationMode, JobStatus } from '@/lib/company/types';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,8 @@ import { toast } from 'sonner';
 const CreateJobForm: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const DRAFT_KEY = 'simhire_job_draft';
   
   // Form state
   const [formData, setFormData] = useState({
@@ -33,6 +35,45 @@ const CreateJobForm: React.FC = () => {
   });
 
   const [skillInput, setSkillInput] = useState('');
+  
+  // Load saved draft on mount
+  useEffect(() => {
+    const savedDraft = localStorage.getItem(DRAFT_KEY);
+    if (savedDraft) {
+      try {
+        const parsed = JSON.parse(savedDraft);
+        setFormData(parsed.data);
+        setLastSaved(new Date(parsed.timestamp));
+        toast.info('Draft terakhir dimuat', {
+          description: `Tersimpan ${new Date(parsed.timestamp).toLocaleString('id-ID')}`,
+        });
+      } catch (error) {
+        console.error('Failed to load draft:', error);
+      }
+    }
+  }, []);
+  
+  // Auto-save draft every 30 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (formData.title || formData.description) {
+        const draft = {
+          data: formData,
+          timestamp: new Date().toISOString(),
+        };
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+        setLastSaved(new Date());
+      }
+    }, 30000); // 30 seconds
+    
+    return () => clearInterval(timer);
+  }, [formData]);
+  
+  const clearDraft = () => {
+    localStorage.removeItem(DRAFT_KEY);
+    setLastSaved(null);
+    toast.success('Draft dihapus');
+  };
 
   const handleInputChange = (field: string, value: string | number | boolean | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -114,6 +155,9 @@ const CreateJobForm: React.FC = () => {
       // Create job
       createJobPost(jobData);
       
+      // Clear draft after successful creation
+      clearDraft();
+      
       toast.success('Lowongan berhasil dibuat!');
       navigate('/company/jobs');
       
@@ -138,15 +182,36 @@ const CreateJobForm: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="outline" onClick={() => navigate('/company/jobs')}>
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Kembali
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Buat Lowongan Baru</h1>
-          <p className="text-gray-600">Buat lowongan kerja untuk menarik kandidat terbaik</p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" onClick={() => navigate('/company/jobs')}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Kembali
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Buat Lowongan Baru</h1>
+            <p className="text-gray-600">Buat lowongan kerja untuk menarik kandidat terbaik</p>
+          </div>
         </div>
+        
+        {/* Draft Indicator */}
+        {lastSaved && (
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 text-green-800 rounded-lg text-sm">
+              <Clock className="w-4 h-4" />
+              <span>Tersimpan otomatis {lastSaved.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={clearDraft}
+              className="text-red-600 hover:text-red-700"
+            >
+              Hapus Draft
+            </Button>
+          </div>
+        )}
       </div>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">

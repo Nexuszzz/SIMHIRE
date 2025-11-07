@@ -55,7 +55,14 @@ export interface Application {
   status: ApplicationStatus;
   notes?: string;
   timeline?: ApplicationTimeline[];
-  simulasiScores?: Record<string, number>; // NEW: Simulasi scores { 'frontend': 85, 'backend': 90 }
+  simulasiScores?: Record<string, number>; // Simulasi scores { 'frontend': 85, 'backend': 90 }
+  portfolio?: Array<{
+    id: string;
+    title: string;
+    description: string;
+    technologies: string[];
+    thumbnail?: string;
+  }>; // Attached portfolio projects
 }
 
 export interface ApplicationTimeline {

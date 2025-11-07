@@ -5,9 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Building2, Briefcase, MapPin, DollarSign, FileText, Upload, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Building2, Briefcase, MapPin, DollarSign, FileText, Upload, CheckCircle2, AlertCircle, FolderOpen } from 'lucide-react';
 import { toast } from 'sonner';
 import { saveApplication, type Application } from '@/lib/storage';
+import { loadProjects, type PortfolioProject } from '@/lib/portfolio';
 import { useNavigate } from 'react-router-dom';
 
 interface ApplyJobModalProps {
@@ -28,6 +29,8 @@ interface ApplyJobModalProps {
 const ApplyJobModal: React.FC<ApplyJobModalProps> = ({ isOpen, onClose, jobData, onApplicationSubmitted }) => {
   const navigate = useNavigate();
   const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [portfolioProjects, setPortfolioProjects] = useState<PortfolioProject[]>([]);
+  const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -39,6 +42,14 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({ isOpen, onClose, jobData,
     agreeTerms: false
   });
   const [showTemplates, setShowTemplates] = useState(false);
+  
+  // Load portfolio projects
+  useEffect(() => {
+    if (isOpen) {
+      const projects = loadProjects();
+      setPortfolioProjects(projects);
+    }
+  }, [isOpen]);
   
   // Load saved draft from localStorage
   useEffect(() => {
@@ -85,7 +96,18 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({ isOpen, onClose, jobData,
       }
     });
     
-    // Create application object with simulasi scores
+    // Get selected portfolio projects data
+    const selectedPortfolioData = portfolioProjects
+      .filter(project => selectedProjects.includes(project.id))
+      .map(project => ({
+        id: project.id,
+        title: project.title,
+        description: project.description,
+        technologies: project.tech,
+        thumbnail: project.coverImage,
+      }));
+    
+    // Create application object with simulasi scores and portfolio
     const application: Application = {
       id: crypto.randomUUID(),
       jobId: jobData.id || crypto.randomUUID(),
@@ -98,6 +120,7 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({ isOpen, onClose, jobData,
       status: 'applied',
       notes: formData.coverLetter,
       simulasiScores: Object.keys(userSimulasiScores).length > 0 ? userSimulasiScores : undefined,
+      portfolio: selectedPortfolioData.length > 0 ? selectedPortfolioData : undefined,
       timeline: [
         {
           date: new Date().toISOString(),
@@ -478,6 +501,68 @@ Hormat saya,
                   </div>
                 </div>
               </div>
+
+              {/* Portfolio Project Selection */}
+              {portfolioProjects.length > 0 && (
+                <div>
+                  <Label className="mb-3 flex items-center gap-2">
+                    <FolderOpen className="w-4 h-4" />
+                    Lampirkan Portfolio (Opsional)
+                  </Label>
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4">
+                    <p className="text-xs text-gray-600 mb-3">
+                      Pilih proyek portfolio yang relevan untuk memperkuat lamaran Anda
+                    </p>
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                      {portfolioProjects.map((project) => (
+                        <div key={project.id} className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-purple-300 transition-colors">
+                          <Checkbox
+                            id={`project-${project.id}`}
+                            checked={selectedProjects.includes(project.id)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedProjects([...selectedProjects, project.id]);
+                              } else {
+                                setSelectedProjects(selectedProjects.filter(id => id !== project.id));
+                              }
+                            }}
+                          />
+                          <label htmlFor={`project-${project.id}`} className="flex-1 cursor-pointer">
+                            <div className="flex items-start gap-3">
+                              {project.coverImage && (
+                                <img 
+                                  src={project.coverImage} 
+                                  alt={project.title}
+                                  className="w-12 h-12 rounded object-cover"
+                                />
+                              )}
+                              <div className="flex-1">
+                                <h4 className="font-medium text-sm text-gray-900">{project.title}</h4>
+                                <p className="text-xs text-gray-500 line-clamp-1">{project.description}</p>
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {project.tech.slice(0, 3).map((tech, idx) => (
+                                    <span key={idx} className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-xs">
+                                      {tech}
+                                    </span>
+                                  ))}
+                                  {project.tech.length > 3 && (
+                                    <span className="text-xs text-gray-500">+{project.tech.length - 3}</span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                    {selectedProjects.length > 0 && (
+                      <p className="text-xs text-purple-700 mt-3 font-medium">
+                        ✨ {selectedProjects.length} proyek terpilih
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="flex items-start space-x-2">
                 <Checkbox
